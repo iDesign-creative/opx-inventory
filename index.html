@@ -64,6 +64,7 @@
   .thumb .pg-l{height:3px;width:100%;background:#c9d4dd;border-radius:2px;margin:3px 0}
   .thumb .pg-l.short{width:58%}
   .thumb .pg-img{height:24px;background:#e3e9ee;border-radius:3px;margin-top:6px}
+  .thumb .page img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
   .thumb .st-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 2px #fff}
   .thumb.out .page{background:transparent;border:1.5px dashed var(--line);box-shadow:none;display:flex;align-items:center;justify-content:center}
   .thumb.out:hover .page{transform:none;box-shadow:none}
@@ -127,7 +128,11 @@ var PROXY='https://funny-eagle-3488.idesign-creative.deno.net/';        // revie
 var REVIEW_BASE='https://idesign-creative.github.io/brand-site-review/'; // Review dashboard/library base
 // Real data from the OPX Partner Audit sheet (coordinator contacts included per approval).
 var PARTNERS=[
-  {name:'Our Lady of the Lake University', site:'https://onlineprograms.ollusa.edu/', postcard:'done', pens:'na', onepagers:{done:3,total:6}, email:'cramos@ollusa.edu', phone:'(210) 941-1513'},
+  {name:'Our Lady of the Lake University', site:'https://onlineprograms.ollusa.edu/', postcard:'done', pens:'na', onepagers:{done:3,total:6}, email:'cramos@ollusa.edu', phone:'(210) 941-1513', files:[
+    {prog:'BSW', img:'thumbs/ollu-bsw.jpg', id:'urn:aaid:sc:VA6C2:c01b0478-72df-5001-ba9a-8b061b7c4231'},
+    {prog:'MSW', img:'thumbs/ollu-msw.jpg', id:'urn:aaid:sc:VA6C2:62ee2e51-5db0-5014-9643-8afd5b700429'},
+    {prog:'MA',  img:'thumbs/ollu-ma.jpg',  id:'urn:aaid:sc:VA6C2:f6fd80ff-07d7-5f8b-a6d4-4337aa7e18c1'}
+  ]},
   {name:'Salve Regina University', site:'https://onlinenursing.salve.edu/', postcard:'pending', pens:'na', onepagers:{done:5,total:6}, email:'carlos.ramos@salve.edu', phone:'', epd:'Liana Wiemels'},
   {name:'Schreiner University', site:'https://onlinenursing.schreiner.edu/', postcard:'done', pens:'na', onepagers:{done:2,total:2}, email:'cramos@schreiner.edu', phone:'830.307.5814'},
   {name:'University of Texas at Tyler', site:'https://nursingonline.uttyler.edu/', postcard:'pending', pens:'na', onepagers:{done:17,total:18}, email:'cramos@uttler.edu', phone:'(903) 525-6697'},
@@ -146,19 +151,28 @@ var STATUS_LABEL={complete:'Complete', progress:'In progress', none:'Not started
 var sel=0;
 var opOpen=true;   // One-Pagers box expanded by default
 function toggleOP(){ opOpen=!opOpen; var s=document.getElementById('opsec'); if(s) s.classList.toggle('open',opOpen); }
+function openExpress(id){ window.open('https://new.express.adobe.com/id/'+id,'_blank','noopener'); }
 function opThumbs(p){
-  var op=p.onepagers; if(!op.total) return '';
+  var op=p.onepagers, files=p.files||[];
+  var total=Math.max(op.total||0, files.length); if(!total) return '';
+  var doneCount=files.length||op.done||0;
   var bands=['#33C9FF','#0E7FB0','#6F2C3E','#F0AB00','#3E7C59','#565A5C'];
   var h='<div class="thumbs">';
-  for(var i=0;i<op.total;i++){
-    var cap='One-pager '+(i+1);
-    if(i<op.done){
+  for(var i=0;i<total;i++){
+    var f=files[i];
+    if(f){                       // real Adobe Express preview
+      h+='<div class="thumb" title="'+esc(f.prog)+' one-pager — open in Express" onclick="openExpress(\''+f.id+'\')">'
+        +'<div class="page"><span class="st-dot"></span><img src="'+f.img+'" alt="'+esc(f.prog)+' one-pager"></div>'
+        +'<div class="thumb-cap">'+esc(f.prog)+'</div></div>';
+    } else if(i<doneCount){      // completed, no real image yet → branded placeholder
+      var cap='One-pager '+(i+1);
       h+='<div class="thumb" title="'+cap+'" onclick="toast(\'Opening '+cap+'…\')"><div class="page"><span class="st-dot"></span>'
         +'<div class="pg-band" style="background:'+bands[i%bands.length]+'"></div><div class="pg-in"><div class="pg-h"></div>'
         +'<div class="pg-l"></div><div class="pg-l"></div><div class="pg-l short"></div><div class="pg-img"></div></div></div>'
         +'<div class="thumb-cap">'+cap+'</div></div>';
-    } else {
-      h+='<div class="thumb out" title="'+cap+' — not started"><div class="page"><span>Not started</span></div><div class="thumb-cap">'+cap+'</div></div>';
+    } else {                     // outstanding
+      var capO='One-pager '+(i+1);
+      h+='<div class="thumb out" title="'+capO+' — not started"><div class="page"><span>Not started</span></div><div class="thumb-cap">'+capO+'</div></div>';
     }
   }
   return h+'</div>';
