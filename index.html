@@ -45,6 +45,7 @@
   .contact a{color:var(--sub);font-weight:700}
   .contact .k{color:#5C7E90;font-weight:700;text-transform:uppercase;font-size:10.5px;letter-spacing:.04em;margin-right:6px}
   .reqbadge{display:inline-block;color:#18551D;background:#C8E6C9;border-radius:20px;padding:1px 8px;font-size:11px;font-weight:700;white-space:nowrap}
+  .reqbadge.arch{color:var(--sub);background:rgba(137,168,180,.2)}
   /* section cards */
   .sec{background:var(--grad);border:1px solid var(--ocean70);border-radius:0 16px 0 16px;box-shadow:var(--shadow);padding:0;margin-bottom:16px;overflow:hidden}
   .sech{display:flex;align-items:center;gap:12px;padding:15px 20px 13px}
@@ -137,34 +138,42 @@ function siteReviewLink(url){ return PROXY+'?url='+encodeURIComponent(url); }
 function hostOf(url){ try{return new URL(url).hostname;}catch(e){return url;} }
 function reviewDashLink(url){ return REVIEW_BASE+'dashboard.html?site='+encodeURIComponent(hostOf(url)); }
 function fmtReqDate(ts){ try{return new Date(ts).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});}catch(e){return '';} }
-// Look up a NON-archived review for this microsite (so the same link is reused until archived).
-function fetchActiveReview(url){
-  return fetch(SUPA_URL+'/rest/v1/reviews?url=eq.'+encodeURIComponent(url)+'&order=created_at.desc&select=id,url,name,created_at,archived',{headers:SUPA_H})
+// Latest review for this microsite (any state). archived flag drives the 3-state UI.
+function fetchLatestReview(url){
+  return fetch(SUPA_URL+'/rest/v1/reviews?url=eq.'+encodeURIComponent(url)+'&order=created_at.desc&limit=1&select=id,url,name,created_at,archived',{headers:SUPA_H})
     .then(function(r){return r.ok?r.json():[];})
-    .then(function(rows){return (rows||[]).filter(function(x){return x.archived!==true;})[0]||null;})
+    .then(function(rows){return (rows&&rows[0])||null;})
     .catch(function(){return null;});
 }
 function copyReviewLink(url){ copy(siteReviewLink(url),'Review link copied — reuse it until the review is archived'); }
 // Create the review in Studio Review (records the request date), or reuse the active one, then copy the link.
 function requestReview(btn,url,name){
   if(btn){ btn.disabled=true; btn.textContent='Requesting…'; }
-  fetchActiveReview(url).then(function(existing){
-    if(existing){ copyReviewLink(url); return refreshWebReview(PARTNERS[sel]); }
+  fetchLatestReview(url).then(function(existing){
+    if(existing && existing.archived!==true){ copyReviewLink(url); return refreshWebReview(PARTNERS[sel]); } // active → reuse, don't duplicate
     return fetch(SUPA_URL+'/rest/v1/reviews',{method:'POST',headers:Object.assign({'Content-Type':'application/json',Prefer:'return=minimal'},SUPA_H),body:JSON.stringify([{url:url,name:name||null,project:hostOf(url),created_by:'iDesign · OPX Inventory'}])})
       .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); copyReviewLink(url); toast('Added to Studio Review · requested '+fmtReqDate(Date.now())+' — link copied'); return refreshWebReview(PARTNERS[sel]); });
   }).catch(function(e){ toast('Couldn’t reach Review ('+e.message+')'); refreshWebReview(PARTNERS[sel]); });
 }
-// Render the Website row based on whether an active review exists.
+// Render the Website row for one of 3 states: none / active (requested) / archived.
 function refreshWebReview(p){
   var row=document.getElementById('webrow'); if(!row||!p.site) return;
   var siteJs=(p.site||'').replace(/'/g,"\\'"), nameJs=(p.name||'').replace(/'/g,"\\'");
-  return fetchActiveReview(p.site).then(function(rev){
+  return fetchLatestReview(p.site).then(function(rev){
     if(!document.getElementById('webrow')) return;
-    var meta='<a href="'+esc(p.site)+'" target="_blank" rel="noopener">'+esc(p.site)+'</a>'+(rev?' · <span class="reqbadge">Requested '+fmtReqDate(rev.created_at)+'</span>':'');
-    var main='<div class="rmain"><div class="rname">Program microsite</div><div class="rmeta">'+meta+'</div></div>';
-    var acts = rev
-      ? '<button class="btn primary" onclick="copyReviewLink(\''+siteJs+'\')">Copy review link</button><a class="btn" href="'+reviewDashLink(p.site)+'" target="_blank" rel="noopener">Open in Review ↗</a>'
-      : '<button class="btn primary" onclick="requestReview(this,\''+siteJs+'\',\''+nameJs+'\')">Share review link</button><a class="btn" href="'+esc(p.site)+'" target="_blank" rel="noopener">Open site ↗</a>';
+    var active   = rev && rev.archived!==true;
+    var archived = rev && rev.archived===true;
+    var badge = active   ? ' · <span class="reqbadge">Requested '+fmtReqDate(rev.created_at)+'</span>'
+              : archived ? ' · <span class="reqbadge arch">Archived '+fmtReqDate(rev.created_at)+'</span>' : '';
+    var main='<div class="rmain"><div class="rname">Program microsite</div><div class="rmeta"><a href="'+esc(p.site)+'" target="_blank" rel="noopener">'+esc(p.site)+'</a>'+badge+'</div></div>';
+    var acts;
+    if(active){
+      acts='<button class="btn primary" onclick="copyReviewLink(\''+siteJs+'\')">Copy review link</button><a class="btn" href="'+reviewDashLink(p.site)+'" target="_blank" rel="noopener">Open in Review ↗</a>';
+    } else if(archived){
+      acts='<button class="btn primary" onclick="requestReview(this,\''+siteJs+'\',\''+nameJs+'\')">Request again</button><a class="btn" href="'+reviewDashLink(p.site)+'" target="_blank" rel="noopener">Open in Review ↗</a>';
+    } else {
+      acts='<button class="btn primary" onclick="requestReview(this,\''+siteJs+'\',\''+nameJs+'\')">Share review link</button><a class="btn" href="'+esc(p.site)+'" target="_blank" rel="noopener">Open site ↗</a>';
+    }
     document.getElementById('webrow').innerHTML=main+acts;
   });
 }
@@ -230,6 +239,8 @@ function renderDetail(){
 }
 
 renderList(); renderDetail();
+// Re-check Review status when the user returns to this tab (e.g. after archiving in Review).
+window.addEventListener('focus',function(){ var p=PARTNERS[sel]; if(p&&p.site) refreshWebReview(p); });
 </script>
 </body>
 </html>
