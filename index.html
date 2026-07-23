@@ -65,6 +65,8 @@
   .thumb .pg-l.short{width:58%}
   .thumb .pg-img{height:24px;background:#e3e9ee;border-radius:3px;margin-top:6px}
   .thumb .page img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+  .swag-thumb{width:46px;height:46px;border-radius:8px;overflow:hidden;background:#fff;flex:none;box-shadow:0 1px 5px rgba(0,10,20,.35);display:flex;align-items:center;justify-content:center}
+  .swag-thumb img{width:100%;height:100%;object-fit:contain;display:block}
   .thumb .st-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 2px #fff}
   .thumb.out .page{background:transparent;border:1.5px dashed var(--line);box-shadow:none;display:flex;align-items:center;justify-content:center}
   .thumb.out:hover .page{transform:none;box-shadow:none}
@@ -165,6 +167,28 @@ var PARTNERS=[
   ]},
   {name:'Rio of Ohio', site:'', postcard:'pending', pens:'na', onepagers:{done:0,total:0}, email:'', phone:'', epd:'Liana Wiemels'}
 ];
+
+// Printed (postcard) + SWAG deliverables — postcard previews from Adobe Express; SWAG product images from the audit sheet. Data from the per-partner audit tabs.
+var DELIV={
+  'Our Lady of the Lake University':{
+    printed:{status:'revision', img:'thumbs/ollu-postcard.jpg', id:'urn:aaid:sc:VA6C2:38cd148a-3df8-57b3-8e1e-5324fcec6f03', note:'Wrong QR code — needs update'},
+    swag:[{item:'Tablecloth',img:'thumbs/ollu-tablecloth.jpg',qty:'1',last:'Mar 25, 2026',status:'done',vendor:'bestofsigns.com'},
+          {item:'Pens',img:'thumbs/ollu-pen.jpg',qty:'300',last:'Mar 25, 2026',status:'done',vendor:'pens.com'}]
+  },
+  'Salve Regina University':{ printed:{status:'none'}, swag:[{item:'Tablecloth',status:'na'},{item:'Pens',status:'none'}] },
+  'Schreiner University':{
+    printed:{status:'done', img:'thumbs/schreiner-postcard.jpg', id:'urn:aaid:sc:VA6C2:0cda9a42-6bbb-40a7-8b9a-190e8c7cf3e3', qty:'1K', last:'Feb 11, 2026'},
+    swag:[{item:'Tablecloth',status:'na'},{item:'Pens',img:'thumbs/schreiner-pen.jpg',qty:'300',last:'Jun 12, 2026',status:'done',vendor:'pens.com'}]
+  },
+  'University of Texas at Tyler':{ printed:{status:'none'}, swag:[{item:'Tablecloth',status:'na'},{item:'Pens',status:'none'}] },
+  'York College of Pennsylvania':{
+    printed:{status:'none'},
+    swag:[{item:'Tablecloth',img:'thumbs/york-tablecloth.jpg',qty:'1',last:'Mar 25, 2026',status:'done',vendor:'bestofsigns.com'},
+          {item:'Pens',img:'thumbs/york-pen.jpg',qty:'300',last:'Mar 25, 2026',status:'done',vendor:'pens.com'}]
+  },
+  'Rio of Ohio':{ printed:{status:'none'}, swag:[{item:'Tablecloth',status:'na'},{item:'Pens',status:'none'}] }
+};
+PARTNERS.forEach(function(p){ var d=DELIV[p.name]; if(d){ p.printed=d.printed; p.swag=d.swag; } });
 
 function statusOf(p){
   if(!p.site && p.onepagers.total===0) return 'none';
@@ -275,7 +299,7 @@ function renderList(){
   }).join('');
 }
 
-function pill(state){var m={done:['done','Complete'],pending:['pending','Not started'],na:['na','Not ordered']};var x=m[state]||m.na;return '<span class="pill '+x[0]+'">'+x[1]+'</span>';}
+function pill(state){var m={done:['done','Complete'],pending:['pending','Not started'],na:['na','Not ordered'],revision:['pending','Needs revision'],none:['na','Not started']};var x=m[state]||m.na;return '<span class="pill '+x[0]+'">'+x[1]+'</span>';}
 
 function renderDetail(){
   var p=PARTNERS[sel]; var s=statusOf(p);
@@ -306,21 +330,33 @@ function renderDetail(){
   } else { h+='<div class="empty" style="padding:14px 0">No one-pagers yet.</div>'; }
   h+='</div></div>';
 
-  // Printed materials
+  // Printed materials (Postcard) — preview from Adobe Express + real audit data
+  var pr=p.printed||{status:p.postcard||'none'};
   h+='<div class="sec"><div class="sech"><span class="si">'+IC.print+'</span><h2>Printed materials</h2>'+exBtn+'</div>'
-    +'<div class="row"><div class="rmain"><div class="rname">Postcard (5×7)</div><div class="rmeta">Last ordered: —</div></div>'
-    +pill(p.postcard)+'<button class="btn" onclick="reorder(\'Postcard (5×7)\')">Reorder</button></div></div>';
+    +'<div class="row">'
+    + (pr.img? '<span class="swag-thumb"'+(pr.id?' style="cursor:pointer" title="Open in Express" onclick="openExpress(\''+pr.id+'\')"':'')+'><img src="'+pr.img+'" alt="Postcard 5x7"></span>':'')
+    + '<div class="rmain"><div class="rname">Postcard (5×7)</div><div class="rmeta">'
+      + (pr.qty||pr.last? 'Qty '+(pr.qty||'—')+' · Last ordered '+(pr.last||'—') : 'Not ordered yet')
+      + (pr.note? ' · <span style="color:#E7B35C">'+esc(pr.note)+'</span>':'') + '</div></div>'
+    + pill(pr.status)+'<button class="btn" onclick="reorder(\'Postcard (5×7)\')">Reorder</button></div></div>';
 
-  // SWAG
-  h+='<div class="sec"><div class="sech"><span class="si">'+IC.swag+'</span><h2>SWAG</h2>'+exBtn+'</div>'
-    +'<div class="row"><div class="rmain"><div class="rname">Pens</div><div class="rmeta">Last ordered: —</div></div>'
-    +pill(p.pens)+'<button class="btn" onclick="reorder(\'Pens\')">Order</button></div></div>';
+  // SWAG — product images from the audit sheet + real reorder data
+  h+='<div class="sec"><div class="sech"><span class="si">'+IC.swag+'</span><h2>SWAG</h2>'+exBtn+'</div>';
+  (p.swag||[{item:'Pens',status:p.pens||'na'}]).forEach(function(s){
+    h+='<div class="row">'
+      + (s.img? '<span class="swag-thumb"><img src="'+s.img+'" alt="'+esc(s.item)+'"></span>':'')
+      + '<div class="rmain"><div class="rname">'+esc(s.item)+'</div><div class="rmeta">'
+        + (s.qty||s.last? 'Qty '+(s.qty||'—')+' · Last ordered '+(s.last||'—')+(s.vendor?' · '+esc(s.vendor):'') : (s.status==='na'?'Not applicable':'Not ordered yet'))
+        + '</div></div>'
+      + pill(s.status)+'<button class="btn" onclick="reorder(\''+esc(s.item)+'\')">'+(s.status==='done'?'Reorder':'Order')+'</button></div>';
+  });
+  h+='</div>';
 
   // Events
   h+='<div class="sec"><div class="sech"><span class="si">'+IC.event+'</span><h2>Events</h2>'+exBtn+'</div>'
     +'<div class="empty">No event materials tracked yet.<button class="btn sm" onclick="toast(\'Add event material\')">Add item</button></div></div>';
 
-  h+='<div class="note">Website “Share review link” writes a real request to <b style="color:var(--sub)">Studio Review</b> with the request date, and reuses the same link until the review is archived there. Reorder dates and file/SWAG actions are still demonstrative.</div>';
+  h+='<div class="note">One-pager &amp; postcard previews come from <b style="color:var(--sub)">Adobe Express</b>; SWAG photos and reorder dates come from the audit sheet; “Share review link” writes a real request to <b style="color:var(--sub)">Studio Review</b>. The Reorder / Order buttons are still demonstrative.</div>';
   document.getElementById('detail').innerHTML=h;
   if(p.site) refreshWebReview(p);
 }
