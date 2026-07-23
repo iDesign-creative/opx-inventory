@@ -97,11 +97,11 @@ var exBtn='<span style="flex:1"></span><a class="btn sm" href="'+EXPRESS_URL+'" 
 // Real data from the OPX Partner Audit sheet (coordinator contacts included per approval).
 var PARTNERS=[
   {name:'Our Lady of the Lake University', site:'https://onlineprograms.ollusa.edu/', postcard:'done', pens:'na', onepagers:{done:3,total:6}, email:'cramos@ollusa.edu', phone:'(210) 941-1513'},
-  {name:'Salve Regina University', site:'https://onlinenursing.salve.edu/', postcard:'pending', pens:'na', onepagers:{done:5,total:6}, email:'carlos.ramos@salve.edu', phone:''},
+  {name:'Salve Regina University', site:'https://onlinenursing.salve.edu/', postcard:'pending', pens:'na', onepagers:{done:5,total:6}, email:'carlos.ramos@salve.edu', phone:'', epd:'Liana Wiemels'},
   {name:'Schreiner University', site:'https://onlinenursing.schreiner.edu/', postcard:'done', pens:'na', onepagers:{done:2,total:2}, email:'cramos@schreiner.edu', phone:'830.307.5814'},
   {name:'University of Texas at Tyler', site:'https://nursingonline.uttyler.edu/', postcard:'pending', pens:'na', onepagers:{done:17,total:18}, email:'cramos@uttler.edu', phone:'(903) 525-6697'},
-  {name:'York College of Pennsylvania', site:'https://onlinedegrees.ycp.edu/', postcard:'pending', pens:'na', onepagers:{done:2,total:2}, email:'', phone:''},
-  {name:'Rio of Ohio', site:'', postcard:'pending', pens:'na', onepagers:{done:0,total:0}, email:'', phone:''}
+  {name:'York College of Pennsylvania', site:'https://onlinedegrees.ycp.edu/', postcard:'pending', pens:'na', onepagers:{done:2,total:2}, email:'', phone:'', epd:'Liana Wiemels'},
+  {name:'Rio of Ohio', site:'', postcard:'pending', pens:'na', onepagers:{done:0,total:0}, email:'', phone:'', epd:'Liana Wiemels'}
 ];
 
 function statusOf(p){
@@ -148,7 +148,8 @@ function renderDetail(){
   h+='<div class="contact">';
   if(p.email) h+='<span><span class="k">Coordinator</span><a href="mailto:'+esc(p.email)+'">'+esc(p.email)+'</a></span>';
   if(p.phone) h+='<span><span class="k">Phone</span>'+esc(p.phone)+'</span>';
-  if(!p.email&&!p.phone) h+='<span class="k">No coordinator contact on file</span>';
+  if(p.epd) h+='<span><span class="k">EPD</span>'+esc(p.epd)+'</span>';
+  if(!p.email&&!p.phone&&!p.epd) h+='<span class="k">No contact on file</span>';
   h+='</div>';
 
   // Website
