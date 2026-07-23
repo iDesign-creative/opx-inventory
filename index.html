@@ -46,6 +46,29 @@
   .contact .k{color:#5C7E90;font-weight:700;text-transform:uppercase;font-size:10.5px;letter-spacing:.04em;margin-right:6px}
   .reqbadge{display:inline-block;color:#18551D;background:#C8E6C9;border-radius:20px;padding:1px 8px;font-size:11px;font-weight:700;white-space:nowrap}
   .reqbadge.arch{color:var(--sub);background:rgba(137,168,180,.2)}
+  /* collapsible One-Pagers box + file thumbnails */
+  .secbtn{width:100%;background:none;border:none;text-align:left;font-family:inherit;cursor:pointer;color:inherit}
+  .secbtn:hover{background:rgba(137,242,247,.04)}
+  .sec .chev{color:var(--muted);font-size:16px;font-weight:700;transition:transform .15s;display:inline-block}
+  .sec.open .chev{transform:rotate(90deg)}
+  .op-body{display:none;padding:2px 20px 18px;border-top:1px solid rgba(137,242,247,.10)}
+  .sec.open .op-body{display:block}
+  .op-actions{display:flex;gap:10px;margin:14px 0 16px;flex-wrap:wrap}
+  .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:14px}
+  .thumb{cursor:pointer}
+  .thumb .page{aspect-ratio:8.5/11;background:#fff;border-radius:5px;box-shadow:0 2px 9px rgba(0,10,20,.4);overflow:hidden;position:relative;transition:transform .12s,box-shadow .12s}
+  .thumb:hover .page{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,10,20,.5)}
+  .thumb .pg-band{height:22%}
+  .thumb .pg-in{padding:6px 7px}
+  .thumb .pg-h{height:5px;width:72%;background:#33405a;border-radius:2px;margin:4px 0 6px}
+  .thumb .pg-l{height:3px;width:100%;background:#c9d4dd;border-radius:2px;margin:3px 0}
+  .thumb .pg-l.short{width:58%}
+  .thumb .pg-img{height:24px;background:#e3e9ee;border-radius:3px;margin-top:6px}
+  .thumb .st-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 2px #fff}
+  .thumb.out .page{background:transparent;border:1.5px dashed var(--line);box-shadow:none;display:flex;align-items:center;justify-content:center}
+  .thumb.out:hover .page{transform:none;box-shadow:none}
+  .thumb.out .page span{color:var(--muted);font-size:9px;font-weight:700;text-align:center;padding:4px}
+  .thumb-cap{font-size:10.5px;color:var(--muted);margin-top:6px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   /* section cards */
   .sec{background:var(--grad);border:1px solid var(--ocean70);border-radius:0 16px 0 16px;box-shadow:var(--shadow);padding:0;margin-bottom:16px;overflow:hidden}
   .sech{display:flex;align-items:center;gap:12px;padding:15px 20px 13px}
@@ -121,6 +144,25 @@ function statusOf(p){
 }
 var STATUS_LABEL={complete:'Complete', progress:'In progress', none:'Not started'};
 var sel=0;
+var opOpen=true;   // One-Pagers box expanded by default
+function toggleOP(){ opOpen=!opOpen; var s=document.getElementById('opsec'); if(s) s.classList.toggle('open',opOpen); }
+function opThumbs(p){
+  var op=p.onepagers; if(!op.total) return '';
+  var bands=['#33C9FF','#0E7FB0','#6F2C3E','#F0AB00','#3E7C59','#565A5C'];
+  var h='<div class="thumbs">';
+  for(var i=0;i<op.total;i++){
+    var cap='One-pager '+(i+1);
+    if(i<op.done){
+      h+='<div class="thumb" title="'+cap+'" onclick="toast(\'Opening '+cap+'…\')"><div class="page"><span class="st-dot"></span>'
+        +'<div class="pg-band" style="background:'+bands[i%bands.length]+'"></div><div class="pg-in"><div class="pg-h"></div>'
+        +'<div class="pg-l"></div><div class="pg-l"></div><div class="pg-l short"></div><div class="pg-img"></div></div></div>'
+        +'<div class="thumb-cap">'+cap+'</div></div>';
+    } else {
+      h+='<div class="thumb out" title="'+cap+' — not started"><div class="page"><span>Not started</span></div><div class="thumb-cap">'+cap+'</div></div>';
+    }
+  }
+  return h+'</div>';
+}
 
 function esc(s){return (s==null?'':String(s)).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function icon(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';}
@@ -209,15 +251,17 @@ function renderDetail(){
   } else { h+='<div class="empty">No microsite launched yet.<button class="btn sm" onclick="toast(\'Add microsite URL\')">Add URL</button></div>'; }
   h+='</div>';
 
-  // One-Pagers
+  // One-Pagers — collapsible box with a thumbnail of each file
   var op=p.onepagers;
-  h+='<div class="sec"><div class="sech"><span class="si">'+IC.doc+'</span><h2>One-Pagers</h2><span class="cnt">'+(op.total?op.done+' of '+op.total+' programs':'—')+'</span></div>';
+  h+='<div class="sec'+(opOpen?' open':'')+'" id="opsec">'
+    +'<button type="button" class="sech secbtn" onclick="toggleOP()"><span class="si">'+IC.doc+'</span><h2>One-Pagers</h2>'
+      +'<span class="cnt">'+(op.total?op.done+' of '+op.total+' programs':'—')+'</span><span style="flex:1"></span><span class="chev">›</span></button>'
+    +'<div class="op-body">';
   if(op.total){
-    h+='<div class="row"><div class="rmain"><div class="rname">Program one-pagers</div><div class="rmeta">'+op.done+' complete'+(op.done<op.total?' · '+(op.total-op.done)+' outstanding':'')+'</div></div>'
-      +'<button class="btn" onclick="toast(\'Downloading '+op.done+' file'+(op.done===1?'':'s')+'…\')">Download</button>'
-      +'<button class="btn" onclick="reqReview(\'One-Pagers\')">Request review</button></div>';
-  } else { h+='<div class="empty">No one-pagers yet.</div>'; }
-  h+='</div>';
+    h+='<div class="op-actions"><button class="btn" onclick="toast(\'Downloading '+op.done+' file'+(op.done===1?'':'s')+'…\')">Download all</button>'
+      +'<button class="btn" onclick="reqReview(\'One-Pagers\')">Request review</button></div>'+opThumbs(p);
+  } else { h+='<div class="empty" style="padding:14px 0">No one-pagers yet.</div>'; }
+  h+='</div></div>';
 
   // Printed materials
   h+='<div class="sec"><div class="sech"><span class="si">'+IC.print+'</span><h2>Printed materials</h2>'+exBtn+'</div>'
