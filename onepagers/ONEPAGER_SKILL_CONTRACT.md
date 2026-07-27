@@ -27,18 +27,27 @@ In `index.html`, the partner's `files:[…]` array gets one entry per one-pager:
 ```js
 { prog:'MSN-FNP',                         // short label shown on the thumbnail
   img:'thumbs/salve-msnfnp.jpg',          // optional preview image (thumbs/)
-  html:'onepagers/salve-msnfnp.html',     // View link
-  pdf:'onepagers/salve-msnfnp.pdf',       // PDF link
   check:{                                 // print fields the auto-compare verifies (see §3)
     'Program name':'Family Nurse Practitioner',
     'Tuition':['$39,408','$41,712'],
     'Credit hours':'42 credits'
-  }
+  },
+  variants:[                              // every one-pager has two versions:
+    {label:'EPD',     html:'onepagers/salve-msnfnp.html',         pdf:'onepagers/salve-msnfnp.pdf'},          // personalized with the enrollment rep
+    {label:'Generic', html:'onepagers/salve-msnfnp-generic.html', pdf:'onepagers/salve-msnfnp-generic.pdf'}   // no rep
+  ]
 }
 ```
 
-A file WITH `html` shows View + PDF and is print-sync-checked. A file WITHOUT `html`
-shows a legacy preview + "PDF pending" (no Adobe Express anywhere).
+**Variants (EPD vs Generic).** The **EPD** version carries the partner's enrollment
+rep (e.g. "Liana Wiemels"); the **Generic** version drops that block. Each variant
+should have BOTH an `html` (View) and a `pdf` (Download) — the skill generates both.
+Files: `…-<program>.{html,pdf}` for EPD, `…-<program>-generic.{html,pdf}` for Generic.
+(Today Salve's Generic is PDF-only — add its HTML when the skill regenerates it.)
+
+Per variant the inventory shows **View · Download · Review**. A variant with only a
+`pdf` shows Download + Review but no View. A file with no built variant shows a
+legacy preview + "PDF pending" (no Adobe Express anywhere).
 
 ## 3. The `check` object (drives the auto-compare)
 These are the print-relevant facts that must stay in sync with the live microsite:

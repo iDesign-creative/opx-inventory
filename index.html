@@ -54,7 +54,11 @@
   .op-body{display:none;padding:2px 20px 18px;border-top:1px solid rgba(137,242,247,.10)}
   .sec.open .op-body{display:block}
   .op-actions{display:flex;gap:10px;margin:14px 0 16px;flex-wrap:wrap}
-  .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:14px}
+  .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px}
+  .op-variants{margin-top:6px;display:flex;flex-direction:column;gap:4px}
+  .opv{font-size:10px;font-weight:700;color:var(--muted);text-align:center;line-height:1.5}
+  .opv a{color:var(--primary)}
+  .opv-label{display:inline-block;background:rgba(51,201,255,.14);color:var(--sub);border-radius:8px;padding:1px 7px;margin-right:5px;font-size:9px;text-transform:uppercase;letter-spacing:.04em}
   .thumb{cursor:pointer}
   .thumb .page{aspect-ratio:8.5/11;background:#fff;border-radius:5px;box-shadow:0 2px 9px rgba(0,10,20,.4);overflow:hidden;position:relative;transition:transform .12s,box-shadow .12s}
   .thumb:hover .page{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,10,20,.5)}
@@ -145,9 +149,14 @@ var PARTNERS=[
     {prog:'RN-BS',   img:'thumbs/salve-rnbs.jpg'},
     {prog:'DNP',     img:'thumbs/salve-dnp.jpg'},
     {prog:'PMHNP',   img:'thumbs/salve-pmhnp.jpg'},
-    {prog:'MSN-FNP', img:'thumbs/salve-msnfnp.jpg', html:'onepagers/salve-msnfnp.html', pdf:'onepagers/salve-msnfnp.pdf',
+    {prog:'MSN-FNP', img:'thumbs/salve-msnfnp.jpg',
       // print fields the auto-compare checks against the live microsite when a review is archived
-      check:{'Program name':'Family Nurse Practitioner','Tuition':['$39,408','$41,712']}},
+      check:{'Program name':'Family Nurse Practitioner','Tuition':['$39,408','$41,712']},
+      // two versions: EPD (personalized with the enrollment rep) + Generic (no rep)
+      variants:[
+        {label:'EPD',     html:'onepagers/salve-msnfnp.html',         pdf:'onepagers/salve-msnfnp.pdf'},
+        {label:'Generic',                                             pdf:'onepagers/salve-msnfnp-generic.pdf'}
+      ]},
     {prog:'MHA',     img:'thumbs/salve-mha.jpg'}
   ]},
   {name:'Schreiner University', site:'https://onlinenursing.schreiner.edu/', postcard:'done', pens:'na', onepagers:{done:2,total:2}, email:'cramos@schreiner.edu', phone:'830.307.5814', files:[
@@ -217,7 +226,7 @@ function flagKey(pname,prog){ return pname+'|'+prog; }
 function needsRevision(p,f){ var x=FLAGS[flagKey(p.name,f.prog)]; return (x&&x.needs)?(x.detail||'Needs revision'):''; }
 function openOnePager(url){ if(url) window.open(url,'_blank','noopener'); }
 // friendly download filename, e.g. Salve-Regina-University-MSN-FNP-one-pager.pdf
-function dlName(p,f){ return (p.name+' '+f.prog+' one-pager').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-+|-+$/g,'')+'.pdf'; }
+function dlName(p,f,v){ return (p.name+' '+f.prog+(v&&v.label?' '+v.label:'')+' one-pager').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-+|-+$/g,'')+'.pdf'; }
 // Send a one-pager into Studio Review — opens its PDF in the PDF reviewer so the
 // team can comment page-by-page. Reuses/creates one review per one-pager PDF.
 function opReviewLink(pdfAbs,label){ return REVIEW_BASE+'pdf.html?v='+encodeURIComponent(pdfAbs)+'&name='+encodeURIComponent(label||''); }
@@ -234,13 +243,24 @@ function opThumbs(p){
   if(files.length){            // one-pagers (HTML + PDF in /onepagers/)
     var h='<div class="thumbs">';
     files.forEach(function(f){
-      var built=!!f.html;
+      var vs=f.variants||((f.html||f.pdf)?[{label:'',html:f.html,pdf:f.pdf}]:[]);
+      var built=false, openUrl='';
+      vs.forEach(function(v){ if(v.html||v.pdf) built=true; if(!openUrl&&v.html) openUrl=v.html; });
+      if(!openUrl) vs.forEach(function(v){ if(!openUrl&&v.pdf) openUrl=v.pdf; });
       var flag=needsRevision(p,f);   // print-sync flag (set after a website review is archived)
       if(built){
-        h+='<div class="thumb" title="'+esc(f.prog)+' one-pager — open">'
-          +'<div class="page" onclick="openOnePager(\''+f.html+'\')"><span class="st-dot'+(flag?' rev':'')+'"></span><img src="'+f.img+'" alt="'+esc(f.prog)+' one-pager"></div>'
+        var vhtml=vs.map(function(v){
+          if(!v.html&&!v.pdf) return '';
+          var a=[];
+          if(v.html) a.push('<a href="'+v.html+'" target="_blank" rel="noopener">View</a>');
+          if(v.pdf) a.push('<a href="'+v.pdf+'" download="'+dlName(p,f,v)+'" title="Download current version (PDF)">Download</a>');
+          if(v.pdf) a.push('<a href="javascript:void 0" onclick="requestOPReview(\''+v.pdf.replace(/'/g,"\\'")+'\',\''+(p.name+' '+f.prog+(v.label?' ('+v.label+')':'')).replace(/'/g,"\\'")+'\');return false" title="Send to Studio Review">Review</a>');
+          return '<div class="opv">'+(v.label?'<span class="opv-label">'+esc(v.label)+'</span>':'')+a.join(' · ')+'</div>';
+        }).join('');
+        h+='<div class="thumb" title="'+esc(f.prog)+' one-pager">'
+          +'<div class="page" onclick="openOnePager(\''+openUrl+'\')"><span class="st-dot'+(flag?' rev':'')+'"></span>'+(f.img?'<img src="'+f.img+'" alt="'+esc(f.prog)+' one-pager">':'')+'</div>'
           +'<div class="thumb-cap">'+esc(f.prog)+'</div>'
-          +'<div class="op-links"><a href="'+f.html+'" target="_blank" rel="noopener">View</a> · <a href="'+f.pdf+'" download="'+dlName(p,f)+'" title="Download current version (PDF)">Download</a> · <a href="javascript:void 0" onclick="requestOPReview(\''+f.pdf.replace(/'/g,"\\'")+'\',\''+(p.name+' '+f.prog).replace(/'/g,"\\'")+'\');return false" title="Send to Studio Review">Request review</a></div>'
+          +'<div class="op-variants">'+vhtml+'</div>'
           +(flag?'<div class="op-flag" title="'+esc(flag)+'">Needs revision</div>':'')
           +'</div>';
       } else {
