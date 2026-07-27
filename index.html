@@ -72,6 +72,13 @@
   .thumb.out:hover .page{transform:none;box-shadow:none}
   .thumb.out .page span{color:var(--muted);font-size:9px;font-weight:700;text-align:center;padding:4px}
   .thumb-cap{font-size:10.5px;color:var(--muted);margin-top:6px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .thumb .page{cursor:pointer}
+  .thumb .page.legacy{cursor:default;opacity:.72}
+  .op-links{font-size:10px;font-weight:700;text-align:center;margin-top:3px}
+  .op-links a{color:var(--primary)}
+  .op-links.muted{color:#5C7E90;font-weight:600}
+  .thumb .st-dot.rev{background:#E7B35C}
+  .op-flag{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#7D570A;background:#FFF7E8;border-radius:10px;padding:2px 7px;margin:5px auto 0;width:max-content}
   /* section cards */
   .sec{background:var(--grad);border:1px solid var(--ocean70);border-radius:0 16px 0 16px;box-shadow:var(--shadow);padding:0;margin-bottom:16px;overflow:hidden}
   .sech{display:flex;align-items:center;gap:12px;padding:15px 20px 13px}
@@ -120,8 +127,7 @@
 
 <script>
 var REVIEW_URL='https://idesign-creative.github.io/brand-site-review/library.html';
-var EXPRESS_URL='https://new.express.adobe.com/your-stuff/projects/urn:aaid:sc:VA6C2:944958f2-f597-409b-95ad-955a4554002e?promoid=FMHMZ4HK&mv=other&openFrom=copy-link';
-var exBtn='<span style="flex:1"></span><a class="btn sm" href="'+EXPRESS_URL+'" target="_blank" rel="noopener" title="Design workspace where printed materials are made">Open in Express ↗</a>';
+var exBtn='';   // Adobe Express removed — one-pagers are now HTML/PDF in /onepagers/
 // ---- Studio Review integration (same public Supabase project + anon key the Review app uses) ----
 var SUPA_URL='https://puytjdeavhowngzqdymh.supabase.co';
 var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1eXRqZGVhdmhvd25nenFkeW1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MjYyMzEsImV4cCI6MjA5OTEwMjIzMX0.CqC7Sh6d6dNr6hCiT9tpgKPKWsVJpQhsbaJyAYN-kZY';
@@ -131,53 +137,55 @@ var REVIEW_BASE='https://idesign-creative.github.io/brand-site-review/'; // Revi
 // Real data from the OPX Partner Audit sheet (coordinator contacts included per approval).
 var PARTNERS=[
   {name:'Our Lady of the Lake University', site:'https://onlineprograms.ollusa.edu/', postcard:'done', pens:'na', onepagers:{done:3,total:6}, email:'cramos@ollusa.edu', phone:'(210) 941-1513', files:[
-    {prog:'BSW', img:'thumbs/ollu-bsw.jpg', id:'urn:aaid:sc:VA6C2:c01b0478-72df-5001-ba9a-8b061b7c4231'},
-    {prog:'MSW', img:'thumbs/ollu-msw.jpg', id:'urn:aaid:sc:VA6C2:62ee2e51-5db0-5014-9643-8afd5b700429'},
-    {prog:'MA',  img:'thumbs/ollu-ma.jpg',  id:'urn:aaid:sc:VA6C2:f6fd80ff-07d7-5f8b-a6d4-4337aa7e18c1'}
+    {prog:'BSW', img:'thumbs/ollu-bsw.jpg'},
+    {prog:'MSW', img:'thumbs/ollu-msw.jpg'},
+    {prog:'MA',  img:'thumbs/ollu-ma.jpg'}
   ]},
   {name:'Salve Regina University', site:'https://onlinenursing.salve.edu/', postcard:'pending', pens:'na', onepagers:{done:5,total:6}, email:'carlos.ramos@salve.edu', phone:'', epd:'Liana Wiemels', files:[
-    {prog:'RN-BS',   img:'thumbs/salve-rnbs.jpg',   id:'urn:aaid:sc:VA6C2:796cd0e4-14e5-4fc5-a605-2181659abafa'},
-    {prog:'DNP',     img:'thumbs/salve-dnp.jpg',    id:'urn:aaid:sc:VA6C2:3cc58565-64ad-45ad-89fe-49264d79ac7d'},
-    {prog:'PMHNP',   img:'thumbs/salve-pmhnp.jpg',  id:'urn:aaid:sc:VA6C2:783db54e-b456-4e7e-a3ae-a97775807340'},
-    {prog:'MSN-FNP', img:'thumbs/salve-msnfnp.jpg', id:'urn:aaid:sc:VA6C2:ad07a67a-de5c-4073-ab8f-cecce9d0c66a'},
-    {prog:'MHA',     img:'thumbs/salve-mha.jpg',    id:'urn:aaid:sc:VA6C2:e4f8980a-1b02-58c8-b45d-0033843169bd'}
+    {prog:'RN-BS',   img:'thumbs/salve-rnbs.jpg'},
+    {prog:'DNP',     img:'thumbs/salve-dnp.jpg'},
+    {prog:'PMHNP',   img:'thumbs/salve-pmhnp.jpg'},
+    {prog:'MSN-FNP', img:'thumbs/salve-msnfnp.jpg', html:'onepagers/salve-msnfnp.html', pdf:'onepagers/salve-msnfnp.pdf',
+      // print fields the auto-compare checks against the live microsite when a review is archived
+      check:{'Program name':'Family Nurse Practitioner','Tuition':['$39,408','$41,712']}},
+    {prog:'MHA',     img:'thumbs/salve-mha.jpg'}
   ]},
   {name:'Schreiner University', site:'https://onlinenursing.schreiner.edu/', postcard:'done', pens:'na', onepagers:{done:2,total:2}, email:'cramos@schreiner.edu', phone:'830.307.5814', files:[
-    {prog:'MSN-FNP',   img:'thumbs/schreiner-msnfnp.jpg',   id:'urn:aaid:sc:VA6C2:159c358a-a304-5876-8d4d-3e920da72922'},
-    {prog:'MSN-PMHNP', img:'thumbs/schreiner-msnpmhnp.jpg', id:'urn:aaid:sc:VA6C2:eec771df-5756-546b-bb9a-65ad01b4b6fd'}
+    {prog:'MSN-FNP',   img:'thumbs/schreiner-msnfnp.jpg'},
+    {prog:'MSN-PMHNP', img:'thumbs/schreiner-msnpmhnp.jpg'}
   ]},
   {name:'University of Texas at Tyler', site:'https://nursingonline.uttyler.edu/', postcard:'pending', pens:'na', onepagers:{done:17,total:18}, email:'cramos@uttler.edu', phone:'(903) 525-6697', files:[
-    {prog:'RN-BSN',       img:'thumbs/uttyler-rnbsn.jpg',      id:'urn:aaid:sc:VA6C2:d0fac4b2-b81f-4f65-9936-6d7dfac4adfd'},
-    {prog:'ADN-BSN',      img:'thumbs/uttyler-adnbsn.jpg',     id:'urn:aaid:sc:VA6C2:59c6f953-1036-507b-a6ec-df02dd8e2812'},
-    {prog:'RN-MSN',       img:'thumbs/uttyler-rnmsn.jpg',      id:'urn:aaid:sc:VA6C2:a47562ca-d749-5365-9cf3-c408104c53dc'},
-    {prog:'MSN-FNP',      img:'thumbs/uttyler-msnfnp.jpg',     id:'urn:aaid:sc:VA6C2:9305175e-be6d-4433-80df-e9c810c05074'},
-    {prog:'MSN-PMHNP',    img:'thumbs/uttyler-msnpmhnp.jpg',   id:'urn:aaid:sc:VA6C2:a9d374d8-a54b-4f8f-910d-5fc05db6d55e'},
-    {prog:'MSN-Admin',    img:'thumbs/uttyler-msnadmin.jpg',   id:'urn:aaid:sc:VA6C2:d136a084-b95c-4baf-8999-06d2fad98081'},
-    {prog:'MSN-Ed',       img:'thumbs/uttyler-msned.jpg',      id:'urn:aaid:sc:VA6C2:b628c1e1-6581-4648-915a-65c258cbeea7'},
-    {prog:'MSN-IQ Safety',img:'thumbs/uttyler-msniqsafety.jpg',id:'urn:aaid:sc:VA6C2:19424afb-8e08-49cc-a5f8-63d6098c03a9'},
-    {prog:'MSN-MBA',      img:'thumbs/uttyler-msnmba.jpg',     id:'urn:aaid:sc:VA6C2:80466116-5208-4c63-9d48-eb2c73bb7c0c'},
-    {prog:'MSN-PhD',      img:'thumbs/uttyler-msnphd.jpg',     id:'urn:aaid:sc:VA6C2:96fbebba-d81f-4a0d-89c8-fca3be2b161b'},
-    {prog:'BSN-PhD',      img:'thumbs/uttyler-bsnphd.jpg',     id:'urn:aaid:sc:VA6C2:1545ce10-df40-49a3-9319-8ea82e3f94c9'},
-    {prog:'DNP',          img:'thumbs/uttyler-dnp.jpg',        id:'urn:aaid:sc:VA6C2:c7b15174-fe95-4777-9575-3c9c2c19da66'},
-    {prog:'PM-AGACNP',    img:'thumbs/uttyler-pmagacnp.jpg',   id:'urn:aaid:sc:VA6C2:6856433b-21d9-576f-acfb-200a8a0e36f0'}
+    {prog:'RN-BSN',       img:'thumbs/uttyler-rnbsn.jpg'},
+    {prog:'ADN-BSN',      img:'thumbs/uttyler-adnbsn.jpg'},
+    {prog:'RN-MSN',       img:'thumbs/uttyler-rnmsn.jpg'},
+    {prog:'MSN-FNP',      img:'thumbs/uttyler-msnfnp.jpg'},
+    {prog:'MSN-PMHNP',    img:'thumbs/uttyler-msnpmhnp.jpg'},
+    {prog:'MSN-Admin',    img:'thumbs/uttyler-msnadmin.jpg'},
+    {prog:'MSN-Ed',       img:'thumbs/uttyler-msned.jpg'},
+    {prog:'MSN-IQ Safety',img:'thumbs/uttyler-msniqsafety.jpg'},
+    {prog:'MSN-MBA',      img:'thumbs/uttyler-msnmba.jpg'},
+    {prog:'MSN-PhD',      img:'thumbs/uttyler-msnphd.jpg'},
+    {prog:'BSN-PhD',      img:'thumbs/uttyler-bsnphd.jpg'},
+    {prog:'DNP',          img:'thumbs/uttyler-dnp.jpg'},
+    {prog:'PM-AGACNP',    img:'thumbs/uttyler-pmagacnp.jpg'}
   ]},
   {name:'York College of Pennsylvania', site:'https://onlinedegrees.ycp.edu/', postcard:'pending', pens:'na', onepagers:{done:2,total:2}, email:'', phone:'', epd:'Liana Wiemels', files:[
-    {prog:'RN-BSN', img:'thumbs/ycp-rnbsn.jpg', id:'urn:aaid:sc:VA6C2:516a2605-9abb-53af-aead-74c1353a7dcd'},
-    {prog:'MSN',    img:'thumbs/ycp-msn.jpg',   id:'urn:aaid:sc:VA6C2:d788e825-1be1-477c-8e71-1b764453d80a'}
+    {prog:'RN-BSN', img:'thumbs/ycp-rnbsn.jpg'},
+    {prog:'MSN',    img:'thumbs/ycp-msn.jpg'}
   ]},
   {name:'Rio of Ohio', site:'', postcard:'pending', pens:'na', onepagers:{done:0,total:0}, email:'', phone:'', epd:'Liana Wiemels'}
 ];
 
-// Printed (postcard) + SWAG deliverables — postcard previews from Adobe Express; SWAG product images from the audit sheet. Data from the per-partner audit tabs.
+// Printed (postcard) + SWAG deliverables — preview images + reorder data from the per-partner audit tabs.
 var DELIV={
   'Our Lady of the Lake University':{
-    printed:{status:'revision', img:'thumbs/ollu-postcard.jpg', id:'urn:aaid:sc:VA6C2:38cd148a-3df8-57b3-8e1e-5324fcec6f03', note:'Wrong QR code — needs update'},
+    printed:{status:'revision', img:'thumbs/ollu-postcard.jpg', note:'Wrong QR code — needs update'},
     swag:[{item:'Tablecloth',img:'thumbs/ollu-tablecloth.jpg',qty:'1',last:'Mar 25, 2026',status:'done',vendor:'bestofsigns.com'},
           {item:'Pens',img:'thumbs/ollu-pen.jpg',qty:'300',last:'Mar 25, 2026',status:'done',vendor:'pens.com'}]
   },
   'Salve Regina University':{ printed:{status:'none'}, swag:[{item:'Tablecloth',status:'na'},{item:'Pens',status:'none'}] },
   'Schreiner University':{
-    printed:{status:'done', img:'thumbs/schreiner-postcard.jpg', id:'urn:aaid:sc:VA6C2:0cda9a42-6bbb-40a7-8b9a-190e8c7cf3e3', qty:'1K', last:'Feb 11, 2026'},
+    printed:{status:'done', img:'thumbs/schreiner-postcard.jpg', qty:'1K', last:'Feb 11, 2026'},
     swag:[{item:'Tablecloth',status:'na'},{item:'Pens',img:'thumbs/schreiner-pen.jpg',qty:'300',last:'Jun 12, 2026',status:'done',vendor:'pens.com'}]
   },
   'University of Texas at Tyler':{ printed:{status:'none'}, swag:[{item:'Tablecloth',status:'na'},{item:'Pens',status:'none'}] },
@@ -201,15 +209,32 @@ var STATUS_LABEL={complete:'Complete', progress:'In progress', none:'Not started
 var sel=0;
 var opOpen=true;   // One-Pagers box expanded by default
 function toggleOP(){ opOpen=!opOpen; var s=document.getElementById('opsec'); if(s) s.classList.toggle('open',opOpen); }
-function openExpress(id){ window.open('https://new.express.adobe.com/id/'+id,'_blank','noopener'); }
+// Print-sync flags: after a website review is ARCHIVED, an auto-compare checks the
+// one-pager's print fields against the live microsite and records a flag here if
+// they've drifted (course name / tuition / credit hours). Populated in Phase 2.
+var FLAGS={};   // key "Partner|PROG" -> { needs:true, detail:"Verify: Tuition" }
+function flagKey(pname,prog){ return pname+'|'+prog; }
+function needsRevision(p,f){ var x=FLAGS[flagKey(p.name,f.prog)]; return (x&&x.needs)?(x.detail||'Needs revision'):''; }
+function openOnePager(url){ if(url) window.open(url,'_blank','noopener'); }
 function opThumbs(p){
   var files=p.files||[], op=p.onepagers||{};
-  if(files.length){            // real Adobe Express previews
+  if(files.length){            // one-pagers (HTML + PDF in /onepagers/)
     var h='<div class="thumbs">';
     files.forEach(function(f){
-      h+='<div class="thumb" title="'+esc(f.prog)+' one-pager — open in Express" onclick="openExpress(\''+f.id+'\')">'
-        +'<div class="page"><span class="st-dot"></span><img src="'+f.img+'" alt="'+esc(f.prog)+' one-pager"></div>'
-        +'<div class="thumb-cap">'+esc(f.prog)+'</div></div>';
+      var built=!!f.html;
+      var flag=needsRevision(p,f);   // print-sync flag (set after a website review is archived)
+      if(built){
+        h+='<div class="thumb" title="'+esc(f.prog)+' one-pager — open">'
+          +'<div class="page" onclick="openOnePager(\''+f.html+'\')"><span class="st-dot'+(flag?' rev':'')+'"></span><img src="'+f.img+'" alt="'+esc(f.prog)+' one-pager"></div>'
+          +'<div class="thumb-cap">'+esc(f.prog)+'</div>'
+          +'<div class="op-links"><a href="'+f.html+'" target="_blank" rel="noopener">View</a> · <a href="'+f.pdf+'" target="_blank" rel="noopener">PDF</a></div>'
+          +(flag?'<div class="op-flag" title="'+esc(flag)+'">Needs revision</div>':'')
+          +'</div>';
+      } else {
+        h+='<div class="thumb" title="'+esc(f.prog)+' — not yet rebuilt as an HTML one-pager">'
+          +'<div class="page legacy">'+(f.img?'<img src="'+f.img+'" alt="'+esc(f.prog)+'">':'')+'</div>'
+          +'<div class="thumb-cap">'+esc(f.prog)+'</div><div class="op-links muted">PDF pending</div></div>';
+      }
     });
     return h+'</div>';
   }
@@ -330,11 +355,11 @@ function renderDetail(){
   } else { h+='<div class="empty" style="padding:14px 0">No one-pagers yet.</div>'; }
   h+='</div></div>';
 
-  // Printed materials (Postcard) — preview from Adobe Express + real audit data
+  // Printed materials (Postcard) — preview image + real audit data
   var pr=p.printed||{status:p.postcard||'none'};
   h+='<div class="sec"><div class="sech"><span class="si">'+IC.print+'</span><h2>Printed materials</h2>'+exBtn+'</div>'
     +'<div class="row">'
-    + (pr.img? '<span class="swag-thumb"'+(pr.id?' style="cursor:pointer" title="Open in Express" onclick="openExpress(\''+pr.id+'\')"':'')+'><img src="'+pr.img+'" alt="Postcard 5x7"></span>':'')
+    + (pr.img? '<span class="swag-thumb"><img src="'+pr.img+'" alt="Postcard 5x7"></span>':'')
     + '<div class="rmain"><div class="rname">Postcard (5×7)</div><div class="rmeta">'
       + (pr.qty||pr.last? 'Qty '+(pr.qty||'—')+' · Last ordered '+(pr.last||'—') : 'Not ordered yet')
       + (pr.note? ' · <span style="color:#E7B35C">'+esc(pr.note)+'</span>':'') + '</div></div>'
@@ -356,7 +381,7 @@ function renderDetail(){
   h+='<div class="sec"><div class="sech"><span class="si">'+IC.event+'</span><h2>Events</h2>'+exBtn+'</div>'
     +'<div class="empty">No event materials tracked yet.<button class="btn sm" onclick="toast(\'Add event material\')">Add item</button></div></div>';
 
-  h+='<div class="note">One-pager &amp; postcard previews come from <b style="color:var(--sub)">Adobe Express</b>; SWAG photos and reorder dates come from the audit sheet; “Share review link” writes a real request to <b style="color:var(--sub)">Studio Review</b>. The Reorder / Order buttons are still demonstrative.</div>';
+  h+='<div class="note">One-pagers are <b style="color:var(--sub)">HTML → PDF</b> files in <b style="color:var(--sub)">/onepagers/</b> (View opens the live HTML, PDF is the print export). SWAG photos and reorder dates come from the audit sheet; “Share review link” writes a real request to <b style="color:var(--sub)">Studio Review</b>. The Reorder / Order buttons are still demonstrative.</div>';
   document.getElementById('detail').innerHTML=h;
   if(p.site) refreshWebReview(p);
 }
