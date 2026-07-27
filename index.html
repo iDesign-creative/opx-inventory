@@ -148,14 +148,19 @@ var PARTNERS=[
   {name:'Salve Regina University', site:'https://onlinenursing.salve.edu/', postcard:'pending', pens:'na', onepagers:{done:5,total:6}, email:'carlos.ramos@salve.edu', phone:'', epd:'Liana Wiemels', files:[
     {prog:'RN-BS',   img:'thumbs/salve-rnbs.jpg'},
     {prog:'DNP',     img:'thumbs/salve-dnp.jpg'},
-    {prog:'PMHNP',   img:'thumbs/salve-pmhnp.jpg'},
+    {prog:'MSN-PMHNP', img:'thumbs/salve-pmhnp.jpg',
+      check:{'Program name':'Psychiatric Mental Health','Tuition':['$40,851','$43,248'],'Credit hours':'51'},
+      variants:[
+        {label:'EPD',     html:'onepagers/salve-msnpmhnp.html',         pdf:'onepagers/salve-msnpmhnp.pdf'},
+        {label:'Generic', html:'onepagers/salve-msnpmhnp-generic.html', pdf:'onepagers/salve-msnpmhnp-generic.pdf'}
+      ]},
     {prog:'MSN-FNP', img:'thumbs/salve-msnfnp.jpg',
       // print fields the auto-compare checks against the live microsite when a review is archived
-      check:{'Program name':'Family Nurse Practitioner','Tuition':['$39,408','$41,712']},
+      check:{'Program name':'Family Nurse Practitioner','Tuition':['$39,408','$41,712'],'Credit hours':'48'},
       // two versions: EPD (personalized with the enrollment rep) + Generic (no rep)
       variants:[
         {label:'EPD',     html:'onepagers/salve-msnfnp.html',         pdf:'onepagers/salve-msnfnp.pdf'},
-        {label:'Generic',                                             pdf:'onepagers/salve-msnfnp-generic.pdf'}
+        {label:'Generic', html:'onepagers/salve-msnfnp-generic.html', pdf:'onepagers/salve-msnfnp-generic.pdf'}
       ]},
     {prog:'MHA',     img:'thumbs/salve-mha.jpg'}
   ]},
