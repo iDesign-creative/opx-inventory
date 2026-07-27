@@ -218,11 +218,17 @@ function needsRevision(p,f){ var x=FLAGS[flagKey(p.name,f.prog)]; return (x&&x.n
 function openOnePager(url){ if(url) window.open(url,'_blank','noopener'); }
 // friendly download filename, e.g. Salve-Regina-University-MSN-FNP-one-pager.pdf
 function dlName(p,f){ return (p.name+' '+f.prog+' one-pager').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-+|-+$/g,'')+'.pdf'; }
-function downloadPdf(url,name){ var a=document.createElement('a'); a.href=url; a.download=name||''; document.body.appendChild(a); a.click(); a.remove(); }
-function downloadAll(idx){ var p=PARTNERS[idx]; var built=(p.files||[]).filter(function(f){return f.pdf;});
-  if(!built.length){ toast('No PDF one-pagers built yet'); return; }
-  built.forEach(function(f,i){ setTimeout(function(){ downloadPdf(f.pdf,dlName(p,f)); }, i*400); });   // stagger so the browser allows multiple
-  toast('Downloading '+built.length+' PDF'+(built.length===1?'':'s')+'…'); }
+// Send a one-pager into Studio Review — opens its PDF in the PDF reviewer so the
+// team can comment page-by-page. Reuses/creates one review per one-pager PDF.
+function opReviewLink(pdfAbs,label){ return REVIEW_BASE+'pdf.html?v='+encodeURIComponent(pdfAbs)+'&name='+encodeURIComponent(label||''); }
+function requestOPReview(pdfRel,label){
+  var pdfAbs=new URL(pdfRel, location.href).href, link=opReviewLink(pdfAbs,label);
+  fetchLatestReview(pdfAbs).then(function(ex){
+    if(ex && ex.archived!==true){ copy(link,'Review link copied — one-pager already in Review'); return; }
+    return fetch(SUPA_URL+'/rest/v1/reviews',{method:'POST',headers:Object.assign({'Content-Type':'application/json',Prefer:'return=minimal'},SUPA_H),body:JSON.stringify([{url:pdfAbs,name:label||null,project:pdfAbs,created_by:'iDesign · OPX Inventory'}])})
+      .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); copy(link,'One-pager sent to Studio Review — link copied'); });
+  }).catch(function(e){ toast('Couldn’t reach Review ('+e.message+')'); });
+}
 function opThumbs(p){
   var files=p.files||[], op=p.onepagers||{};
   if(files.length){            // one-pagers (HTML + PDF in /onepagers/)
@@ -234,7 +240,7 @@ function opThumbs(p){
         h+='<div class="thumb" title="'+esc(f.prog)+' one-pager — open">'
           +'<div class="page" onclick="openOnePager(\''+f.html+'\')"><span class="st-dot'+(flag?' rev':'')+'"></span><img src="'+f.img+'" alt="'+esc(f.prog)+' one-pager"></div>'
           +'<div class="thumb-cap">'+esc(f.prog)+'</div>'
-          +'<div class="op-links"><a href="'+f.html+'" target="_blank" rel="noopener">View</a> · <a href="'+f.pdf+'" download="'+dlName(p,f)+'" title="Download the print PDF">PDF ↓</a></div>'
+          +'<div class="op-links"><a href="'+f.html+'" target="_blank" rel="noopener">View</a> · <a href="'+f.pdf+'" download="'+dlName(p,f)+'" title="Download current version (PDF)">Download</a> · <a href="javascript:void 0" onclick="requestOPReview(\''+f.pdf.replace(/'/g,"\\'")+'\',\''+(p.name+' '+f.prog).replace(/'/g,"\\'")+'\');return false" title="Send to Studio Review">Request review</a></div>'
           +(flag?'<div class="op-flag" title="'+esc(flag)+'">Needs revision</div>':'')
           +'</div>';
       } else {
@@ -357,8 +363,7 @@ function renderDetail(){
       +'<span class="cnt">'+(p.files&&p.files.length? p.files.length+' one-pager'+(p.files.length===1?'':'s') : (op.total?op.done+' of '+op.total+' programs':'—'))+'</span><span style="flex:1"></span><span class="chev">›</span></button>'
     +'<div class="op-body">';
   if(op.total){
-    h+='<div class="op-actions"><button class="btn" onclick="downloadAll(sel)">Download all PDFs</button>'
-      +'<button class="btn" onclick="reqReview(\'One-Pagers\')">Request review</button></div>'+opThumbs(p);
+    h+=opThumbs(p);
   } else { h+='<div class="empty" style="padding:14px 0">No one-pagers yet.</div>'; }
   h+='</div></div>';
 
