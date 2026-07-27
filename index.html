@@ -216,6 +216,13 @@ var FLAGS={};   // key "Partner|PROG" -> { needs:true, detail:"Verify: Tuition" 
 function flagKey(pname,prog){ return pname+'|'+prog; }
 function needsRevision(p,f){ var x=FLAGS[flagKey(p.name,f.prog)]; return (x&&x.needs)?(x.detail||'Needs revision'):''; }
 function openOnePager(url){ if(url) window.open(url,'_blank','noopener'); }
+// friendly download filename, e.g. Salve-Regina-University-MSN-FNP-one-pager.pdf
+function dlName(p,f){ return (p.name+' '+f.prog+' one-pager').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-+|-+$/g,'')+'.pdf'; }
+function downloadPdf(url,name){ var a=document.createElement('a'); a.href=url; a.download=name||''; document.body.appendChild(a); a.click(); a.remove(); }
+function downloadAll(idx){ var p=PARTNERS[idx]; var built=(p.files||[]).filter(function(f){return f.pdf;});
+  if(!built.length){ toast('No PDF one-pagers built yet'); return; }
+  built.forEach(function(f,i){ setTimeout(function(){ downloadPdf(f.pdf,dlName(p,f)); }, i*400); });   // stagger so the browser allows multiple
+  toast('Downloading '+built.length+' PDF'+(built.length===1?'':'s')+'…'); }
 function opThumbs(p){
   var files=p.files||[], op=p.onepagers||{};
   if(files.length){            // one-pagers (HTML + PDF in /onepagers/)
@@ -227,7 +234,7 @@ function opThumbs(p){
         h+='<div class="thumb" title="'+esc(f.prog)+' one-pager — open">'
           +'<div class="page" onclick="openOnePager(\''+f.html+'\')"><span class="st-dot'+(flag?' rev':'')+'"></span><img src="'+f.img+'" alt="'+esc(f.prog)+' one-pager"></div>'
           +'<div class="thumb-cap">'+esc(f.prog)+'</div>'
-          +'<div class="op-links"><a href="'+f.html+'" target="_blank" rel="noopener">View</a> · <a href="'+f.pdf+'" target="_blank" rel="noopener">PDF</a></div>'
+          +'<div class="op-links"><a href="'+f.html+'" target="_blank" rel="noopener">View</a> · <a href="'+f.pdf+'" download="'+dlName(p,f)+'" title="Download the print PDF">PDF ↓</a></div>'
           +(flag?'<div class="op-flag" title="'+esc(flag)+'">Needs revision</div>':'')
           +'</div>';
       } else {
@@ -350,7 +357,7 @@ function renderDetail(){
       +'<span class="cnt">'+(p.files&&p.files.length? p.files.length+' one-pager'+(p.files.length===1?'':'s') : (op.total?op.done+' of '+op.total+' programs':'—'))+'</span><span style="flex:1"></span><span class="chev">›</span></button>'
     +'<div class="op-body">';
   if(op.total){
-    h+='<div class="op-actions"><button class="btn" onclick="toast(\'Downloading '+op.done+' file'+(op.done===1?'':'s')+'…\')">Download all</button>'
+    h+='<div class="op-actions"><button class="btn" onclick="downloadAll(sel)">Download all PDFs</button>'
       +'<button class="btn" onclick="reqReview(\'One-Pagers\')">Request review</button></div>'+opThumbs(p);
   } else { h+='<div class="empty" style="padding:14px 0">No one-pagers yet.</div>'; }
   h+='</div></div>';
