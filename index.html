@@ -109,6 +109,8 @@
   .op-links.muted{color:#5C7E90;font-weight:600}
   .thumb .st-dot.rev{background:#E7B35C}
   .op-flag{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#7D570A;background:#FFF7E8;border-radius:10px;padding:2px 7px;margin:5px auto 0;width:max-content}
+  .op-draft{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--sub);background:rgba(51,201,255,.14);border-radius:10px;padding:2px 7px;margin:5px auto 0;width:max-content}
+  .opm-draft{font-size:11px;font-weight:700;color:var(--sub);background:rgba(51,201,255,.14);border-radius:10px;padding:5px 10px}
   /* section cards */
   .sec{background:var(--grad);border:1px solid var(--ocean70);border-radius:0 16px 0 16px;box-shadow:var(--shadow);padding:0;margin-bottom:16px;overflow:hidden}
   .sech{display:flex;align-items:center;gap:12px;padding:15px 20px 13px}
@@ -325,6 +327,7 @@ function openOPModal(fi){
     if(!v.html&&!v.pdf) return '';
     var acts='<button class="btn primary sm" onclick="modalReview('+fi+','+vi+')">Request review</button>';
     if(v.pdf) acts+='<button class="btn sm" onclick="modalDownload('+fi+','+vi+')">Download</button>';
+    else if(v.html) acts+='<span class="opm-draft" title="Still being designed — no print PDF yet">Draft · HTML only</span>';
     return '<div class="opm-variant">'+(v.label?'<span class="opm-label">'+esc(v.label)+'</span>':'')+'<div class="opm-acts">'+acts+'</div></div>';
   }).join('');
   document.querySelector('#opModal .opm-body').innerHTML='<button class="opm-x" onclick="closeOPModal()" aria-label="Close">×</button>'
@@ -340,14 +343,14 @@ function opThumbs(p){
     var h='<div class="thumbs">';
     files.forEach(function(f, fi){
       var vs=f.variants||((f.html||f.pdf)?[{label:'',html:f.html,pdf:f.pdf}]:[]);
-      var built=false; vs.forEach(function(v){ if(v.html||v.pdf) built=true; });
+      var built=false, draft=false; vs.forEach(function(v){ if(v.html||v.pdf) built=true; if(v.html&&!v.pdf) draft=true; });
       var flag=needsRevision(p,f);   // print-sync flag (set after a website review is archived)
       if(built){
         // clean, clickable card → opens a focused modal with the review/download options
         h+='<div class="thumb" onclick="openOPModal('+fi+')" title="'+esc(f.prog)+' — review or download">'
           +'<div class="page"><span class="st-dot'+(flag?' rev':'')+'"></span>'+(f.img?'<img src="'+f.img+'" alt="'+esc(f.prog)+' one-pager">':'<div class="pg-blank">'+esc(f.prog)+'</div>')+'</div>'
           +'<div class="thumb-cap">'+esc(f.prog)+'</div>'
-          +(flag?'<div class="op-flag" title="'+esc(flag)+'">Needs revision</div>':'')
+          +(flag?'<div class="op-flag" title="'+esc(flag)+'">Needs revision</div>':(draft?'<div class="op-draft" title="HTML draft — still being designed; no print PDF yet">Draft · HTML only</div>':''))
           +'</div>';
       } else {
         h+='<div class="thumb" title="'+esc(f.prog)+' — not yet rebuilt as an HTML one-pager">'
