@@ -26,6 +26,9 @@
   .linklike:hover{color:var(--text)}
   /* layout */
   .shell{display:grid;grid-template-columns:280px 1fr;gap:0;min-height:calc(100vh - 57px)}
+  .shell.home{grid-template-columns:1fr}
+  .shell.home .rail{display:none}
+  .shell.home .main{width:100%;max-width:1120px;margin:0 auto}
   .rail{border-right:1px solid var(--line);padding:20px 16px}
   .rail .rt{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:2px 8px 12px}
   .prow{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:0 12px 0 12px;cursor:pointer;transition:background .12s}
@@ -409,6 +412,7 @@ function renderHome(){
   document.getElementById('detail').innerHTML=h+'</div>';
 }
 function renderDetail(){
+  var shell=document.querySelector('.shell'); if(shell) shell.classList.toggle('home', sel<0 || !PARTNERS[sel]);
   if(sel<0 || !PARTNERS[sel]){ renderHome(); return; }
   var p=PARTNERS[sel]; var s=statusOf(p);
   var h='<div class="crumb" onclick="goHome()">← All partners</div>';
