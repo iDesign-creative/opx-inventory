@@ -37,6 +37,14 @@
   .prow .ps{font-size:11px;color:var(--muted)}
   /* main */
   .main{padding:26px 30px 70px;max-width:920px}
+  .crumb{color:var(--muted);font-size:12.5px;font-weight:700;cursor:pointer;margin-bottom:12px;display:inline-block}
+  .crumb:hover{color:var(--text)}
+  .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+  .pcard{background:var(--grad);border:1px solid var(--ocean70);border-radius:0 16px 0 16px;box-shadow:var(--shadow);padding:18px 20px;cursor:pointer;transition:transform .12s,box-shadow .12s}
+  .pcard:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,10,20,.4)}
+  .pcard-top{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+  .pcard-name{font-size:17px;font-weight:900;color:#fff;line-height:1.2}
+  .pcard-meta{font-size:12px;color:var(--sub);margin-top:6px}
   .phead{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:6px}
   .phead h1{font-size:26px;font-weight:900;color:#fff;margin:0}
   .statustag{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:20px;padding:3px 10px;align-self:center}
@@ -114,7 +122,7 @@
 <body>
 <header class="topbar">
   <img class="logo" src="Studio-logo-white.svg" alt="iDesign Studio">
-  <span class="ctx"><b>OPX Inventory</b><span class="sep">·</span>Partner Audit</span>
+  <span class="ctx" style="cursor:pointer" onclick="goHome()"><b>OPX Inventory</b><span class="sep">·</span>Partner Audit</span>
   <span class="spacer"></span>
   <span class="linklike" onclick="location.href='https://idesign-creative.github.io/studio-hub/hub.html'">← All tools</span>
 </header>
@@ -145,7 +153,7 @@ var PARTNERS=[
     {prog:'MSW', img:'thumbs/ollu-msw.jpg'},
     {prog:'MA',  img:'thumbs/ollu-ma.jpg'}
   ]},
-  {name:'Salve Regina University', site:'https://onlinenursing.salve.edu/', postcard:'pending', pens:'na', onepagers:{done:5,total:6}, email:'carlos.ramos@salve.edu', phone:'', epd:'Liana Wiemels', files:[
+  {name:'Salve Regina University', site:'https://onlinenursing.salve.edu/', postcard:'pending', pens:'na', onepagers:{done:5,total:6}, email:'carlos.ramos@salve.edu', phone:'', epd:{name:'Liana Wiemels',phone:'216.337.0617',email:'Liana.Wiemels@salve.edu'}, files:[
     {prog:'RN-BS', img:'thumbs/salve-rnbs.jpg',
       check:{'Program name':'RN to B.S.','Tuition':['$9,240','$10,920']},
       variants:[
@@ -205,11 +213,11 @@ var PARTNERS=[
     {prog:'DNP',          img:'thumbs/uttyler-dnp.jpg'},
     {prog:'PM-AGACNP',    img:'thumbs/uttyler-pmagacnp.jpg'}
   ]},
-  {name:'York College of Pennsylvania', site:'https://onlinedegrees.ycp.edu/', postcard:'pending', pens:'na', onepagers:{done:2,total:2}, email:'', phone:'', epd:'Liana Wiemels', files:[
+  {name:'York College of Pennsylvania', site:'https://onlinedegrees.ycp.edu/', postcard:'pending', pens:'na', onepagers:{done:2,total:2}, email:'', phone:'', epd:{name:'Liana Wiemels',phone:'216.337.0617',email:'lwiemels@ycp.edu'}, files:[
     {prog:'RN-BSN', img:'thumbs/ycp-rnbsn.jpg'},
     {prog:'MSN',    img:'thumbs/ycp-msn.jpg'}
   ]},
-  {name:'Rio of Ohio', site:'', postcard:'pending', pens:'na', onepagers:{done:0,total:0}, email:'', phone:'', epd:'Liana Wiemels'}
+  {name:'Rio of Ohio', site:'', postcard:'pending', pens:'na', onepagers:{done:0,total:0}, email:'', phone:'', epd:{name:'Liana Wiemels',phone:'216.337.0617',email:''}}
 ];
 
 // Printed (postcard) + SWAG deliverables — preview images + reorder data from the per-partner audit tabs.
@@ -242,7 +250,7 @@ function statusOf(p){
   return 'none';
 }
 var STATUS_LABEL={complete:'Complete', progress:'In progress', none:'Not started'};
-var sel=0;
+var sel=-1;   // -1 = landing (all partners); set to an index to drill into a partner
 var opOpen=true;   // One-Pagers box expanded by default
 function toggleOP(){ opOpen=!opOpen; var s=document.getElementById('opsec'); if(s) s.classList.toggle('open',opOpen); }
 // Print-sync flags: after a website review is ARCHIVED, an auto-compare checks the
@@ -384,13 +392,31 @@ function renderList(){
 
 function pill(state){var m={done:['done','Complete'],pending:['pending','Not started'],na:['na','Not ordered'],revision:['pending','Needs revision'],none:['na','Not started']};var x=m[state]||m.na;return '<span class="pill '+x[0]+'">'+x[1]+'</span>';}
 
+function goHome(){ sel=-1; renderList(); renderDetail(); window.scrollTo(0,0); }
+function opCount(p){ return (p.files||[]).filter(function(f){ return (f.variants||[]).some(function(v){return v.html||v.pdf;}) || f.html || f.pdf; }).length; }
+function renderHome(){
+  var h='<div class="phead"><h1>OPX Partners</h1><span class="statustag none">'+PARTNERS.length+' partners</span></div>'
+    +'<p style="color:var(--muted);font-size:13.5px;margin:2px 0 22px">Pick a partner to see its website, one-pagers, printed materials, SWAG and events.</p>'
+    +'<div class="pgrid">';
+  PARTNERS.forEach(function(p,i){
+    var s=statusOf(p), n=opCount(p);
+    h+='<div class="pcard" onclick="sel='+i+';renderList();renderDetail();window.scrollTo(0,0)">'
+      +'<div class="pcard-top"><span class="dot '+s+'"></span><span class="statustag '+s+'">'+STATUS_LABEL[s]+'</span></div>'
+      +'<div class="pcard-name">'+esc(p.name)+'</div>'
+      +'<div class="pcard-meta">'+(n? n+' one-pager'+(n===1?'':'s')+' ready' : 'No one-pagers yet')+(p.site?' · microsite live':'')+'</div>'
+      +'</div>';
+  });
+  document.getElementById('detail').innerHTML=h+'</div>';
+}
 function renderDetail(){
+  if(sel<0 || !PARTNERS[sel]){ renderHome(); return; }
   var p=PARTNERS[sel]; var s=statusOf(p);
-  var h='<div class="phead"><h1>'+esc(p.name)+'</h1><span class="statustag '+s+'">'+STATUS_LABEL[s]+'</span></div>';
+  var h='<div class="crumb" onclick="goHome()">← All partners</div>';
+  h+='<div class="phead"><h1>'+esc(p.name)+'</h1><span class="statustag '+s+'">'+STATUS_LABEL[s]+'</span></div>';
   h+='<div class="contact">';
   if(p.email) h+='<span><span class="k">Coordinator</span><a href="mailto:'+esc(p.email)+'">'+esc(p.email)+'</a></span>';
   if(p.phone) h+='<span><span class="k">Phone</span>'+esc(p.phone)+'</span>';
-  if(p.epd) h+='<span><span class="k">EPD</span>'+esc(p.epd)+'</span>';
+  if(p.epd){ var ev=(typeof p.epd==='string')?{name:p.epd}:p.epd; var ep=[esc(ev.name||'')]; if(ev.phone)ep.push(esc(ev.phone)); if(ev.email)ep.push('<a href="mailto:'+esc(ev.email)+'">'+esc(ev.email)+'</a>'); h+='<span><span class="k">EPD</span>'+ep.join(' · ')+'</span>'; }
   if(!p.email&&!p.phone&&!p.epd) h+='<span class="k">No contact on file</span>';
   h+='</div>';
 
