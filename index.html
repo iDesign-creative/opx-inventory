@@ -87,6 +87,21 @@
   .thumb.out:hover .page{transform:none;box-shadow:none}
   .thumb.out .page span{color:var(--muted);font-size:9px;font-weight:700;text-align:center;padding:4px}
   .thumb-cap{font-size:10.5px;color:var(--muted);margin-top:6px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pg-blank{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#33405a;font-weight:900;font-size:13px;text-align:center;padding:10px}
+  /* one-pager modal */
+  .opm-scrim{position:fixed;inset:0;background:rgba(0,16,24,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:60;padding:24px}
+  .opm-scrim.show{display:flex}
+  .opm-body{background:var(--surf);border:1px solid var(--ocean70);border-radius:0 18px 0 18px;box-shadow:0 30px 80px rgba(0,8,16,.7);width:360px;max-width:calc(100vw - 40px);padding:24px;position:relative;text-align:center}
+  .opm-x{position:absolute;top:9px;right:13px;background:none;border:none;color:var(--muted);font-size:24px;line-height:1;cursor:pointer}
+  .opm-x:hover{color:#fff}
+  .opm-thumb{width:150px;aspect-ratio:8.5/11;margin:2px auto 14px;background:#fff;border-radius:6px;overflow:hidden;box-shadow:0 3px 14px rgba(0,10,20,.5);position:relative}
+  .opm-thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+  .opm-blank{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#33405a;font-weight:900;font-size:13px;text-align:center;padding:10px}
+  .opm-title{font-size:17px;font-weight:900;color:#fff}
+  .opm-title-sub{font-size:12px;color:var(--muted);margin-bottom:8px}
+  .opm-variant{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:11px 2px;border-top:1px solid rgba(137,242,247,.12)}
+  .opm-label{display:inline-block;background:rgba(51,201,255,.14);color:var(--sub);border-radius:8px;padding:3px 10px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+  .opm-acts{display:flex;gap:8px}
   .thumb .page.legacy{cursor:default;opacity:.72}
   .thumb .page.static{cursor:default}
   .op-links{font-size:10px;font-weight:700;text-align:center;margin-top:3px}
@@ -139,6 +154,7 @@
   <main class="main" id="detail"></main>
 </div>
 <div class="toast" id="toast"></div>
+<div class="opm-scrim" id="opModal" onclick="if(event.target===this)closeOPModal()"><div class="opm-body"></div></div>
 
 <script>
 var REVIEW_URL='https://idesign-creative.github.io/brand-site-review/library.html';
@@ -277,26 +293,39 @@ function requestOPReview(htmlRel,pdfRel,label){
       .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); copy(link,'One-pager sent to Studio Review — link copied'); });
   }).catch(function(e){ toast('Couldn’t reach Review ('+e.message+')'); });
 }
+// One-pager modal: click a thumbnail → focused modal (blurred bg) with the EPD +
+// Generic review/download options; picking one performs it and closes.
+function modalVariant(fi,vi){ var f=PARTNERS[sel].files[fi]; var vs=f.variants||[{label:'',html:f.html,pdf:f.pdf}]; return {f:f,v:vs[vi]}; }
+function openOPModal(fi){
+  var p=PARTNERS[sel], f=(p.files||[])[fi]; if(!f) return;
+  var vs=f.variants||((f.html||f.pdf)?[{label:'',html:f.html,pdf:f.pdf}]:[]);
+  var thumb=f.img?'<img src="'+f.img+'" alt="'+esc(f.prog)+'">':'<div class="opm-blank">'+esc(f.prog)+'</div>';
+  var rows=vs.map(function(v,vi){
+    if(!v.html&&!v.pdf) return '';
+    var acts='<button class="btn primary sm" onclick="modalReview('+fi+','+vi+')">Request review</button>';
+    if(v.pdf) acts+='<button class="btn sm" onclick="modalDownload('+fi+','+vi+')">Download</button>';
+    return '<div class="opm-variant">'+(v.label?'<span class="opm-label">'+esc(v.label)+'</span>':'')+'<div class="opm-acts">'+acts+'</div></div>';
+  }).join('');
+  document.querySelector('#opModal .opm-body').innerHTML='<button class="opm-x" onclick="closeOPModal()" aria-label="Close">×</button>'
+    +'<div class="opm-thumb">'+thumb+'</div><div class="opm-title">'+esc(f.prog)+'</div><div class="opm-title-sub">'+esc(p.name)+'</div>'+rows;
+  document.getElementById('opModal').classList.add('show');
+}
+function closeOPModal(){ var m=document.getElementById('opModal'); if(m) m.classList.remove('show'); }
+function modalReview(fi,vi){ var x=modalVariant(fi,vi),p=PARTNERS[sel]; requestOPReview(x.v.html||'',x.v.pdf||'',p.name+' '+x.f.prog+(x.v.label?' ('+x.v.label+')':'')); closeOPModal(); }
+function modalDownload(fi,vi){ var x=modalVariant(fi,vi),p=PARTNERS[sel]; if(x.v.pdf){ var a=document.createElement('a'); a.href=x.v.pdf; a.download=dlName(p,x.f,x.v); document.body.appendChild(a); a.click(); a.remove(); } closeOPModal(); }
 function opThumbs(p){
   var files=p.files||[], op=p.onepagers||{};
   if(files.length){            // one-pagers (HTML + PDF in /onepagers/)
     var h='<div class="thumbs">';
-    files.forEach(function(f){
+    files.forEach(function(f, fi){
       var vs=f.variants||((f.html||f.pdf)?[{label:'',html:f.html,pdf:f.pdf}]:[]);
       var built=false; vs.forEach(function(v){ if(v.html||v.pdf) built=true; });
       var flag=needsRevision(p,f);   // print-sync flag (set after a website review is archived)
       if(built){
-        var vhtml=vs.map(function(v){
-          if(!v.html&&!v.pdf) return '';
-          var lbl=(p.name+' '+f.prog+(v.label?' ('+v.label+')':'')).replace(/'/g,"\\'");
-          var a=['<a href="javascript:void 0" onclick="requestOPReview(\''+(v.html||'').replace(/'/g,"\\'")+'\',\''+(v.pdf||'').replace(/'/g,"\\'")+'\',\''+lbl+'\');return false" title="Open this one-pager in Studio Review">Request review</a>'];
-          if(v.pdf) a.push('<a href="'+v.pdf+'" download="'+dlName(p,f,v)+'" title="Download current version (PDF)">Download</a>');
-          return '<div class="opv">'+(v.label?'<span class="opv-label">'+esc(v.label)+'</span>':'')+a.join(' · ')+'</div>';
-        }).join('');
-        h+='<div class="thumb" title="'+esc(f.prog)+' one-pager">'
-          +'<div class="page static"><span class="st-dot'+(flag?' rev':'')+'"></span>'+(f.img?'<img src="'+f.img+'" alt="'+esc(f.prog)+' one-pager">':'')+'</div>'
+        // clean, clickable card → opens a focused modal with the review/download options
+        h+='<div class="thumb" onclick="openOPModal('+fi+')" title="'+esc(f.prog)+' — review or download">'
+          +'<div class="page"><span class="st-dot'+(flag?' rev':'')+'"></span>'+(f.img?'<img src="'+f.img+'" alt="'+esc(f.prog)+' one-pager">':'<div class="pg-blank">'+esc(f.prog)+'</div>')+'</div>'
           +'<div class="thumb-cap">'+esc(f.prog)+'</div>'
-          +'<div class="op-variants">'+vhtml+'</div>'
           +(flag?'<div class="op-flag" title="'+esc(flag)+'">Needs revision</div>':'')
           +'</div>';
       } else {
@@ -473,6 +502,7 @@ function renderDetail(){
   if(p.site) refreshWebReview(p);
 }
 
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeOPModal(); });
 renderList(); renderDetail();
 // Re-check Review status when the user returns to this tab (e.g. after archiving in Review).
 window.addEventListener('focus',function(){ var p=PARTNERS[sel]; if(p&&p.site) refreshWebReview(p); });
