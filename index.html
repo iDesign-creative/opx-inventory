@@ -199,13 +199,13 @@ var PARTNERS=[
         {label:'EPD',     html:'onepagers/salve-msnfnp.html',         pdf:'onepagers/salve-msnfnp.pdf'},
         {label:'Generic', html:'onepagers/salve-msnfnp-generic.html', pdf:'onepagers/salve-msnfnp-generic.pdf'}
       ]},
-    {prog:'FNP Cert',
+    {prog:'FNP Cert', img:'thumbs/salve-fnpcert.jpg',
       check:{'Program name':"Post Master's FNP Certificate",'Tuition':['$22,167','$23,463']},
       variants:[
         {label:'EPD',     html:'onepagers/salve-fnpcert.html',         pdf:'onepagers/salve-fnpcert.pdf'},
         {label:'Generic', html:'onepagers/salve-fnpcert-generic.html', pdf:'onepagers/salve-fnpcert-generic.pdf'}
       ]},
-    {prog:'PMHNP Cert',
+    {prog:'PMHNP Cert', img:'thumbs/salve-pmhnpcert.jpg',
       check:{'Program name':"Post Master's PMHNP Certificate",'Tuition':['$24,630','$26,070']},
       variants:[
         {label:'EPD',     html:'onepagers/salve-pmhnpcert.html',         pdf:'onepagers/salve-pmhnpcert.pdf'},
@@ -216,11 +216,27 @@ var PARTNERS=[
       variants:[
         {label:'EPD',     html:'onepagers/salve-mha.html',         pdf:'onepagers/salve-mha.pdf'},
         {label:'Generic', html:'onepagers/salve-mha-generic.html', pdf:'onepagers/salve-mha-generic.pdf'}
+      ]},
+    {prog:'M.Ed.', img:'thumbs/salve-med.jpg',
+      check:{'Program name':'Special Education','Tuition':['$15,750','$525']},
+      variants:[
+        {label:'EPD',     html:'onepagers/salve-med.html',         pdf:'onepagers/salve-med.pdf'},
+        {label:'Generic', html:'onepagers/salve-med-generic.html', pdf:'onepagers/salve-med-generic.pdf'}
       ]}
   ]},
   {name:'Schreiner University', site:'https://onlinenursing.schreiner.edu/', postcard:'done', pens:'na', onepagers:{done:2,total:2}, email:'cramos@schreiner.edu', phone:'830.307.5814', files:[
-    {prog:'MSN-FNP',   img:'thumbs/schreiner-msnfnp.jpg'},
-    {prog:'MSN-PMHNP', img:'thumbs/schreiner-msnpmhnp.jpg'}
+    {prog:'MSN-FNP', img:'thumbs/schreiner-msnfnp.jpg',
+      check:{'Program name':'Family Nurse Practitioner'},
+      variants:[
+        {label:'EPD',     html:'onepagers/schreiner-fnp.html',         pdf:'onepagers/schreiner-fnp.pdf'},
+        {label:'Generic', html:'onepagers/schreiner-fnp-generic.html', pdf:'onepagers/schreiner-fnp-generic.pdf'}
+      ]},
+    {prog:'MSN-PMHNP', img:'thumbs/schreiner-msnpmhnp.jpg',
+      check:{'Program name':'Psychiatric Mental Health'},
+      variants:[
+        {label:'EPD',     html:'onepagers/schreiner-pmhnp.html',         pdf:'onepagers/schreiner-pmhnp.pdf'},
+        {label:'Generic', html:'onepagers/schreiner-pmhnp-generic.html', pdf:'onepagers/schreiner-pmhnp-generic.pdf'}
+      ]}
   ]},
   {name:'University of Texas at Tyler', site:'https://nursingonline.uttyler.edu/', postcard:'pending', pens:'na', onepagers:{done:17,total:18}, email:'cramos@uttler.edu', phone:'(903) 525-6697', files:[
     {prog:'RN-BSN',       img:'thumbs/uttyler-rnbsn.jpg'},
