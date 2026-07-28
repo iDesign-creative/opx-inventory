@@ -146,8 +146,18 @@ var PARTNERS=[
     {prog:'MA',  img:'thumbs/ollu-ma.jpg'}
   ]},
   {name:'Salve Regina University', site:'https://onlinenursing.salve.edu/', postcard:'pending', pens:'na', onepagers:{done:5,total:6}, email:'carlos.ramos@salve.edu', phone:'', epd:'Liana Wiemels', files:[
-    {prog:'RN-BS',   img:'thumbs/salve-rnbs.jpg'},
-    {prog:'DNP',     img:'thumbs/salve-dnp.jpg'},
+    {prog:'RN-BS', img:'thumbs/salve-rnbs.jpg',
+      check:{'Program name':'RN to B.S.','Tuition':['$9,240','$10,920']},
+      variants:[
+        {label:'EPD',     html:'onepagers/salve-rnbs.html',         pdf:'onepagers/salve-rnbs.pdf'},
+        {label:'Generic', html:'onepagers/salve-rnbs-generic.html', pdf:'onepagers/salve-rnbs-generic.pdf'}
+      ]},
+    {prog:'DNP', img:'thumbs/salve-dnp.jpg',
+      check:{'Program name':'Doctor of Nursing Practice','Tuition':['$23,730','$26,070'],'Credit hours':'30'},
+      variants:[
+        {label:'EPD',     html:'onepagers/salve-dnp.html',         pdf:'onepagers/salve-dnp.pdf'},
+        {label:'Generic', html:'onepagers/salve-dnp-generic.html', pdf:'onepagers/salve-dnp-generic.pdf'}
+      ]},
     {prog:'MSN-PMHNP', img:'thumbs/salve-pmhnp.jpg',
       check:{'Program name':'Psychiatric Mental Health','Tuition':['$40,851','$43,248'],'Credit hours':'51'},
       variants:[
@@ -161,6 +171,18 @@ var PARTNERS=[
       variants:[
         {label:'EPD',     html:'onepagers/salve-msnfnp.html',         pdf:'onepagers/salve-msnfnp.pdf'},
         {label:'Generic', html:'onepagers/salve-msnfnp-generic.html', pdf:'onepagers/salve-msnfnp-generic.pdf'}
+      ]},
+    {prog:'FNP Cert',
+      check:{'Program name':"Post Master's FNP Certificate",'Tuition':['$22,167','$23,463']},
+      variants:[
+        {label:'EPD',     html:'onepagers/salve-fnpcert.html',         pdf:'onepagers/salve-fnpcert.pdf'},
+        {label:'Generic', html:'onepagers/salve-fnpcert-generic.html', pdf:'onepagers/salve-fnpcert-generic.pdf'}
+      ]},
+    {prog:'PMHNP Cert',
+      check:{'Program name':"Post Master's PMHNP Certificate",'Tuition':['$24,630','$26,070']},
+      variants:[
+        {label:'EPD',     html:'onepagers/salve-pmhnpcert.html',         pdf:'onepagers/salve-pmhnpcert.pdf'},
+        {label:'Generic', html:'onepagers/salve-pmhnpcert-generic.html', pdf:'onepagers/salve-pmhnpcert-generic.pdf'}
       ]},
     {prog:'MHA',     img:'thumbs/salve-mha.jpg'}
   ]},
