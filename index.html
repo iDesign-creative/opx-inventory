@@ -134,6 +134,27 @@
   .btn.primary:hover{background:var(--primary90)}
   .btn.sm{padding:6px 12px;font-size:11.5px}
   .empty{padding:16px 20px;border-top:1px solid rgba(137,242,247,.10);color:var(--muted);font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  /* Brand Assets */
+  .brand-wrap{padding:16px 20px;border-top:1px solid rgba(137,242,247,.10);display:flex;flex-direction:column;gap:20px}
+  .brand-block{}
+  .brand-lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--sub);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .bhint{font-weight:600;text-transform:none;letter-spacing:0;color:var(--muted);font-size:11px}
+  .logo-row,.font-row{display:flex;flex-wrap:wrap;gap:12px}
+  .logo-card{width:200px;background:var(--field);border:1px solid var(--line);border-radius:0 12px 0 12px;overflow:hidden}
+  .logo-hold{background:#fff;height:110px;display:flex;align-items:center;justify-content:center;padding:14px}
+  .logo-hold img{max-width:100%;max-height:100%;object-fit:contain}
+  .logo-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;font-size:12.5px;color:var(--text)}
+  .sw-row{display:flex;flex-wrap:wrap;gap:10px}
+  .sw{display:flex;flex-direction:column;align-items:flex-start;gap:0;background:var(--field);border:1px solid var(--line);border-radius:0 12px 0 12px;padding:0 0 8px;cursor:pointer;width:118px;overflow:hidden;transition:border-color .15s,transform .1s;text-align:left}
+  .sw:hover{border-color:var(--ocean70);transform:translateY(-1px)}
+  .sw-chip{width:100%;height:52px;display:block;margin-bottom:8px;border-bottom:1px solid rgba(0,0,0,.15)}
+  .sw-name{font-size:12px;font-weight:700;color:var(--text);padding:0 10px}
+  .sw-hex{font-size:11px;font-family:ui-monospace,Menlo,monospace;color:var(--muted);padding:0 10px;text-transform:uppercase}
+  .font-card{display:flex;align-items:center;gap:12px;background:var(--field);border:1px solid var(--line);border-radius:0 12px 0 12px;padding:12px 14px;min-width:230px}
+  .font-glyph{width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--surf);border:1px solid var(--line);border-radius:8px;font-size:20px;font-weight:800;color:var(--primary)}
+  .font-info{flex:1}
+  .font-name{font-size:14px;font-weight:800;color:var(--text)}
+  .font-role{font-size:11.5px;color:var(--muted)}
   .note{color:#5C7E90;font-size:11.5px;margin-top:14px;line-height:1.5}
   /* toast */
   .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:#083244;border:1px solid var(--ocean70);color:#fff;padding:12px 20px;border-radius:24px;font-size:13.5px;font-weight:700;box-shadow:0 12px 40px rgba(0,10,20,.5);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50}
@@ -176,7 +197,12 @@ var PARTNERS=[
     {prog:'MSW', img:'thumbs/ollu-msw.jpg'},
     {prog:'MA',  img:'thumbs/ollu-ma.jpg'}
   ]},
-  {name:'Salve Regina University', site:'https://onlinenursing.salve.edu/', postcard:'pending', pens:'na', onepagers:{done:5,total:6}, epd:{name:'Liana Wiemels',phone:'216.337.0617',email:'Liana.Wiemels@salve.edu'}, files:[
+  {name:'Salve Regina University', site:'https://onlinenursing.salve.edu/', postcard:'pending', pens:'na', onepagers:{done:5,total:6}, epd:{name:'Liana Wiemels',phone:'216.337.0617',email:'Liana.Wiemels@salve.edu'},
+   brand:{
+     logos:[{label:'Crest + wordmark', src:'brand/salve-logo.png'}],
+     colors:[{name:'Salve Navy',hex:'#003057'},{name:'Salve Green',hex:'#00843C'},{name:'Slate',hex:'#4D6472'},{name:'Mist',hex:'#EAF1F6'}],
+     fonts:[{name:'Aleo',role:'Headings · serif',url:'https://fonts.google.com/specimen/Aleo'},{name:'Libre Franklin',role:'Body · sans',url:'https://fonts.google.com/specimen/Libre+Franklin'}]
+   }, files:[
     {prog:'RN-BS', img:'thumbs/salve-rnbs.jpg',
       check:{'Program name':'RN to B.S.','Tuition':['$9,240','$10,920']},
       variants:[
@@ -228,7 +254,12 @@ var PARTNERS=[
         {label:'Generic', html:'onepagers/salve-med-generic.html', pdf:'onepagers/salve-med-generic.pdf'}
       ]}
   ]},
-  {name:'Schreiner University', site:'https://onlinenursing.schreiner.edu/', postcard:'done', pens:'na', onepagers:{done:2,total:2}, epd:{name:'Carlos Ramos',phone:'830.307.5814',email:'cramos@schreiner.edu'}, files:[
+  {name:'Schreiner University', site:'https://onlinenursing.schreiner.edu/', postcard:'done', pens:'na', onepagers:{done:2,total:2}, epd:{name:'Carlos Ramos',phone:'830.307.5814',email:'cramos@schreiner.edu'},
+   brand:{
+     logos:[{label:'Wordmark', src:'brand/schreiner-logo.png'},{label:'Seal', src:'brand/schreiner-seal.png'}],
+     colors:[{name:'Maroon',hex:'#6E1230'},{name:'Deep Maroon',hex:'#540008'},{name:'Gold',hex:'#F7A81A'},{name:'Blush',hex:'#F3E9EA'}],
+     fonts:[{name:'Poppins',role:'Brand · sans',url:'https://fonts.google.com/specimen/Poppins'}]
+   }, files:[
     {prog:'MSN-FNP', img:'thumbs/schreiner-msnfnp.jpg',
       check:{'Program name':'Family Nurse Practitioner'},
       variants:[
@@ -387,11 +418,13 @@ var IC={
   doc:icon('<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 12h6M9 16h4"/>'),
   print:icon('<rect x="6" y="3" width="12" height="6"/><path d="M6 18H4v-6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6h-2"/><rect x="8" y="15" width="8" height="6"/>'),
   swag:icon('<path d="M5 8h14l-1 12H6z"/><path d="M9 8a3 3 0 0 1 6 0"/>'),
-  event:icon('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/>')
+  event:icon('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/>'),
+  brand:icon('<circle cx="12" cy="12" r="9"/><circle cx="8" cy="10" r="1.2"/><circle cx="12" cy="7.5" r="1.2"/><circle cx="16" cy="10" r="1.2"/><path d="M12 21a3 3 0 0 1 0-6c1.5 0 2-1 2-2"/>')
 };
 
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(function(){t.classList.remove('show');},2200);}
 function copy(txt,msg){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){toast(msg);},function(){toast(msg);});}else toast(msg);}
+function copyHex(hex){ copy(hex, hex+' copied ✓'); }
 function siteReviewLink(url){ return PROXY+'?url='+encodeURIComponent(url); }
 function hostOf(url){ try{return new URL(url).hostname;}catch(e){return url;} }
 function reviewDashLink(url){ return REVIEW_BASE+'dashboard.html?site='+encodeURIComponent(hostOf(url)); }
@@ -539,9 +572,39 @@ function renderDetail(){
   });
   h+='</div>';
 
-  // Events
-  h+='<div class="sec"><div class="sech"><span class="si">'+IC.event+'</span><h2>Events</h2>'+exBtn+'</div>'
-    +'<div class="empty">No event materials tracked yet.<button class="btn sm" onclick="toast(\'Add event material\')">Add item</button></div></div>';
+  // Brand Assets — mini brand center: downloadable logos, copyable palette, brand fonts
+  h+='<div class="sec"><div class="sech"><span class="si">'+IC.brand+'</span><h2>Brand Assets</h2></div>';
+  var b=p.brand;
+  if(b){
+    h+='<div class="brand-wrap">';
+    if(b.logos&&b.logos.length){
+      h+='<div class="brand-block"><div class="brand-lbl">Logos</div><div class="logo-row">';
+      b.logos.forEach(function(l){
+        h+='<div class="logo-card"><div class="logo-hold"><img src="'+esc(l.src)+'" alt="'+esc(p.name)+' '+esc(l.label)+'"></div>'
+          +'<div class="logo-meta"><span>'+esc(l.label)+'</span><a class="btn sm" href="'+esc(l.src)+'" download>Download</a></div></div>';
+      });
+      h+='</div></div>';
+    }
+    if(b.colors&&b.colors.length){
+      h+='<div class="brand-block"><div class="brand-lbl">Color palette <span class="bhint">click to copy hex</span></div><div class="sw-row">';
+      b.colors.forEach(function(c){
+        h+='<button class="sw" onclick="copyHex(\''+esc(c.hex)+'\')" title="Copy '+esc(c.hex)+'"><span class="sw-chip" style="background:'+esc(c.hex)+'"></span><span class="sw-name">'+esc(c.name)+'</span><span class="sw-hex">'+esc(c.hex)+'</span></button>';
+      });
+      h+='</div></div>';
+    }
+    if(b.fonts&&b.fonts.length){
+      h+='<div class="brand-block"><div class="brand-lbl">Typefaces</div><div class="font-row">';
+      b.fonts.forEach(function(f){
+        h+='<div class="font-card"><div class="font-glyph">Ag</div><div class="font-info"><div class="font-name">'+esc(f.name)+'</div><div class="font-role">'+esc(f.role)+'</div></div>'
+          +'<a class="btn sm" href="'+esc(f.url)+'" target="_blank" rel="noopener">Download ↗</a></div>';
+      });
+      h+='</div></div>';
+    }
+    h+='</div>';
+  } else {
+    h+='<div class="empty">Brand assets not added yet — logos, palette and fonts.<button class="btn sm" onclick="toast(\'Send logos, colors + fonts to add this partner\')">Request add</button></div>';
+  }
+  h+='</div>';
 
   h+='<div class="note">One-pagers are <b style="color:var(--sub)">HTML → PDF</b> files in <b style="color:var(--sub)">/onepagers/</b> (Request review opens the HTML in Studio Review; Download gets the print PDF). SWAG photos and reorder dates come from the audit sheet. The <b style="color:var(--sub)">Reorder / Order</b> buttons send a request to Whitney on Slack.</div>';
   document.getElementById('detail').innerHTML=h;
