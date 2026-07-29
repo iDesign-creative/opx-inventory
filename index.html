@@ -63,6 +63,7 @@
   .contact .k{color:#5C7E90;font-weight:700;text-transform:uppercase;font-size:10.5px;letter-spacing:.04em;margin-right:6px}
   .reqbadge{display:inline-block;color:#18551D;background:#C8E6C9;border-radius:20px;padding:1px 8px;font-size:11px;font-weight:700;white-space:nowrap}
   .reqbadge.arch{color:var(--sub);background:rgba(137,168,180,.2)}
+  .reqline{margin-top:7px}
   /* collapsible One-Pagers box + file thumbnails */
   .secbtn{width:100%;background:none;border:none;text-align:left;font-family:inherit;cursor:pointer;color:inherit}
   .secbtn:hover{background:rgba(137,242,247,.04)}
@@ -500,17 +501,16 @@ function refreshWebReview(p){
   return fetchLatestReview(p.site).then(function(rev){
     if(!document.getElementById('webrow')) return;
     var active   = rev && rev.archived!==true;
-    var archived = rev && rev.archived===true;
-    var badge = active   ? ' · <span class="reqbadge">Requested '+fmtReqDate(rev.created_at)+'</span>'
-              : archived ? ' · <span class="reqbadge arch">Archived '+fmtReqDate(rev.created_at)+'</span>' : '';
+    var reviewed = rev && rev.archived===true;   // a past (archived) review — show when, not "archived"
+    var badge = active   ? '<div class="reqline"><span class="reqbadge">Requested '+fmtReqDate(rev.created_at)+'</span></div>'
+              : reviewed ? '<div class="reqline"><span class="reqbadge arch">Last reviewed '+fmtReqDate(rev.created_at)+'</span></div>' : '';
     var main='<div class="rmain"><div class="rname">Program microsite</div><div class="rmeta"><a href="'+esc(p.site)+'" target="_blank" rel="noopener">'+esc(p.site)+'</a>'+badge+'</div></div>';
     var acts;
     if(active){
-      acts='<button class="btn primary" onclick="copyReviewLink(\''+siteJs+'\')">Copy review link</button><a class="btn" href="'+reviewDashLink(p.site)+'" target="_blank" rel="noopener">Open in Review ↗</a>';
-    } else if(archived){
-      acts='<button class="btn primary" onclick="requestReview(this,\''+siteJs+'\',\''+nameJs+'\')">Request again</button><a class="btn" href="'+reviewDashLink(p.site)+'" target="_blank" rel="noopener">Open in Review ↗</a>';
+      acts='<button class="btn primary" onclick="copyReviewLink(\''+siteJs+'\')">Share review link</button><a class="btn" href="'+reviewDashLink(p.site)+'" target="_blank" rel="noopener">Open in Review ↗</a>';
     } else {
-      acts='<button class="btn primary" onclick="requestReview(this,\''+siteJs+'\',\''+nameJs+'\')">Share review link</button><a class="btn" href="'+esc(p.site)+'" target="_blank" rel="noopener">Open site ↗</a>';
+      // none OR previously reviewed → the request button is live again
+      acts='<button class="btn primary" onclick="requestReview(this,\''+siteJs+'\',\''+nameJs+'\')">Request review</button><a class="btn" href="'+esc(p.site)+'" target="_blank" rel="noopener">Open site ↗</a>';
     }
     document.getElementById('webrow').innerHTML=main+acts;
   });
