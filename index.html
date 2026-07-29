@@ -305,8 +305,12 @@ var PARTNERS=[
     {prog:'PM-AGACNP',    img:'thumbs/uttyler-pmagacnp.jpg'}
   ]},
   {name:'York College of Pennsylvania', site:'https://onlinedegrees.ycp.edu/', postcard:'pending', pens:'na', onepagers:{done:2,total:2}, epd:{name:'Liana Wiemels',phone:'216.337.0617',email:'lwiemels@ycp.edu'}, files:[
-    {prog:'RN-BSN', img:'thumbs/ycp-rnbsn.jpg'},
-    {prog:'MSN',    img:'thumbs/ycp-msn.jpg'}
+    {prog:'RN-BSN', img:'thumbs/ycp-rnbsn.jpg',
+      check:{'Program name':'RN to BSN'},
+      variants:[{label:'', pdf:'onepagers/ycp-rnbsn.pdf'}]},   // PDF for now; HTML to follow
+    {prog:'MSN', img:'thumbs/ycp-msn.jpg',
+      check:{'Program name':'MSN'},
+      variants:[{label:'', pdf:'onepagers/ycp-msn.pdf'}]}      // PDF for now; HTML to follow
   ]},
   {name:'Rio of Ohio', site:'', postcard:'pending', pens:'na', onepagers:{done:0,total:0}, epd:{name:'Liana Wiemels',phone:'216.337.0617',email:''}}
 ];
