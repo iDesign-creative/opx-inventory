@@ -35,7 +35,7 @@ Deno.serve(async (req) => {
     const source = String(b.source ?? "OPX Inventory");
     const hook = Deno.env.get("SLACK_WEBHOOK_URL");
     if (!hook) return new Response(JSON.stringify({ ok: false, error: "SLACK_WEBHOOK_URL not set" }), { status: 500, headers: jh });
-    const text = `:package: *Reorder request* — *${item}*\n• Partner: ${partner}\n• Source: ${source}\nWhitney to reach out for details.`;
+    const text = `:package: *Reorder request* — *${item}*\n• Partner: ${partner}\n• Source: ${source}`;
     try {
       const sr = await fetch(hook, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ text }) });
       if (!sr.ok) throw new Error("Slack HTTP " + sr.status);

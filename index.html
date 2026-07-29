@@ -99,6 +99,8 @@
   .opm-blank{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#33405a;font-weight:900;font-size:13px;text-align:center;padding:10px}
   .opm-title{font-size:17px;font-weight:900;color:#fff}
   .opm-title-sub{font-size:12px;color:var(--muted);margin-bottom:8px}
+  .cm-text{font-size:13px;line-height:1.5;color:var(--sub);margin:10px 0 18px}
+  .cm-acts{display:flex;gap:10px;justify-content:center}
   .opm-variant{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:11px 2px;border-top:1px solid rgba(137,242,247,.12)}
   .opm-label{display:inline-block;background:rgba(51,201,255,.14);color:var(--sub);border-radius:8px;padding:3px 10px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
   .opm-acts{display:flex;gap:8px}
@@ -151,12 +153,12 @@
   <aside class="rail">
     <div class="rt">OPX Partners · <span id="pcount"></span></div>
     <div id="plist"></div>
-    <div class="note">Source: OPX Partner Audit sheet · last reviewed May 12, 2026.</div>
   </aside>
   <main class="main" id="detail"></main>
 </div>
 <div class="toast" id="toast"></div>
 <div class="opm-scrim" id="opModal" onclick="if(event.target===this)closeOPModal()"><div class="opm-body"></div></div>
+<div class="opm-scrim" id="confirmModal" onclick="if(event.target===this)closeConfirm()"><div class="opm-body"></div></div>
 
 <script>
 var REVIEW_URL='https://idesign-creative.github.io/brand-site-review/library.html';
@@ -434,14 +436,27 @@ function refreshWebReview(p){
   });
 }
 function reqReview(what){toast('“'+what+'” sent to Review ✓');}
+// Reorder is a two-step action: confirm (guard against accidental clicks) → submit.
+var _pendingReorder=null;
 function reorder(what,partner,btn){
-  // Confirm to the user immediately; the Slack ping is best-effort behind the proxy.
-  if(btn){ btn.disabled=true; btn.textContent='Requested ✓'; }
-  toast('Order request submitted — Whitney Williams will reach out for details.');
+  _pendingReorder={what:what,partner:partner||'',btn:btn||null};
+  document.querySelector('#confirmModal .opm-body').innerHTML=
+     '<div class="opm-title">Request a reorder?</div>'
+    +'<div class="opm-title-sub">'+esc(what)+(partner?' · '+esc(partner):'')+'</div>'
+    +'<p class="cm-text">This sends the request straight to Whitney. Only confirm if you’re ready to reorder.</p>'
+    +'<div class="cm-acts"><button class="btn sm" onclick="closeConfirm()">Cancel</button>'
+    +'<button class="btn primary sm" onclick="confirmReorder()">Yes, request reorder</button></div>';
+  document.getElementById('confirmModal').classList.add('show');
+}
+function closeConfirm(){ var m=document.getElementById('confirmModal'); if(m) m.classList.remove('show'); _pendingReorder=null; }
+function confirmReorder(){
+  var r=_pendingReorder; closeConfirm(); if(!r) return;
+  if(r.btn){ r.btn.disabled=true; r.btn.textContent='Requested ✓'; }
+  toast('Reorder request sent ✓');
   // Fire-and-forget: proxy holds the Slack webhook server-side and DMs Whitney.
   // No Content-Type header → browser sends text/plain (CORS-simple, no preflight).
   try{
-    fetch(PROXY+'reorder',{method:'POST',body:JSON.stringify({item:what,partner:partner||'',source:'OPX Inventory'})}).catch(function(){});
+    fetch(PROXY+'reorder',{method:'POST',body:JSON.stringify({item:r.what,partner:r.partner,source:'OPX Inventory'})}).catch(function(){});
   }catch(e){}
 }
 
@@ -535,7 +550,7 @@ function renderDetail(){
   if(p.site) refreshWebReview(p);
 }
 
-document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeOPModal(); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closeOPModal(); closeConfirm(); } });
 renderList(); renderDetail();
 // Re-check Review status when the user returns to this tab (e.g. after archiving in Review).
 window.addEventListener('focus',function(){ var p=PARTNERS[sel]; if(p&&p.site) refreshWebReview(p); });
