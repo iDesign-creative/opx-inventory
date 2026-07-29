@@ -192,10 +192,19 @@ var PROXY='https://funny-eagle-3488.idesign-creative.deno.net/';        // revie
 var REVIEW_BASE='https://idesign-creative.github.io/brand-site-review/'; // Review dashboard/library base
 // Real data from the OPX Partner Audit sheet. Each partner shows its EPD (enrollment rep) only — no coordinator contacts.
 var PARTNERS=[
-  {name:'Our Lady of the Lake University', site:'https://onlineprograms.ollusa.edu/', postcard:'done', pens:'na', onepagers:{done:3,total:6}, epd:{name:'Carlos Ramos',phone:'(210) 941-1513',email:'cramos@ollusa.edu'}, files:[
-    {prog:'BSW', img:'thumbs/ollu-bsw.jpg'},
-    {prog:'MSW', img:'thumbs/ollu-msw.jpg'},
-    {prog:'MA',  img:'thumbs/ollu-ma.jpg'}
+  {name:'Our Lady of the Lake University', site:'https://onlineprograms.ollusa.edu/', postcard:'done', pens:'na', onepagers:{done:2,total:3}, epd:{name:'Carlos Ramos',phone:'(210) 941-1513',email:'cramos@ollusa.edu'},
+   brand:{
+     logos:[{label:'Wordmark (white)', src:'brand/ollu-logo.png', bg:'#2259A7'}],
+     colors:[{name:'OLLU Blue',hex:'#2259A7'},{name:'Deep Blue',hex:'#1C4D92'},{name:'Gold',hex:'#D7C627'},{name:'Ink',hex:'#333333'}],
+     fonts:[{name:'Poppins',role:'Brand · sans',url:'https://fonts.google.com/specimen/Poppins'}]
+   }, files:[
+    {prog:'MA Counseling', img:'thumbs/ollu-ma.jpg',
+      check:{'Program name':'MA in Counseling','Cost per credit':'$750'},
+      variants:[{label:'', html:'onepagers/ollu-ma.html', pdf:'onepagers/ollu-ma.pdf'}]},
+    {prog:'MSW', img:'thumbs/ollu-msw.jpg',
+      check:{'Program name':'MSW','Cost per credit':'$750'},
+      variants:[{label:'', html:'onepagers/ollu-msw.html', pdf:'onepagers/ollu-msw.pdf'}]},
+    {prog:'BSW', img:'thumbs/ollu-bsw.jpg'}
   ]},
   {name:'Salve Regina University', site:'https://onlinenursing.salve.edu/', postcard:'pending', pens:'na', onepagers:{done:5,total:6}, epd:{name:'Liana Wiemels',phone:'216.337.0617',email:'Liana.Wiemels@salve.edu'},
    brand:{
@@ -302,7 +311,7 @@ var DELIV={
     swag:[{item:'Tablecloth',img:'thumbs/ollu-tablecloth.jpg',qty:'1',last:'Mar 25, 2026',status:'done',vendor:'bestofsigns.com'},
           {item:'Pens',img:'thumbs/ollu-pen.jpg',qty:'300',last:'Mar 25, 2026',status:'done',vendor:'pens.com'}]
   },
-  'Salve Regina University':{ printed:{status:'none'}, swag:[{item:'Tablecloth',status:'na'},{item:'Pens',status:'none'}] },
+  'Salve Regina University':{ printed:{status:'none'}, swag:[{item:'Tablecloth',status:'na'},{item:'Pens',qty:'180',last:'Jul 1, 2026',status:'done'}] },
   'Schreiner University':{
     printed:{status:'done', img:'thumbs/schreiner-postcard.jpg', qty:'1K', last:'Feb 11, 2026'},
     swag:[{item:'Tablecloth',status:'na'},{item:'Pens',img:'thumbs/schreiner-pen.jpg',qty:'300',last:'Jun 12, 2026',status:'done',vendor:'pens.com'}]
@@ -580,7 +589,7 @@ function renderDetail(){
     if(b.logos&&b.logos.length){
       h+='<div class="brand-block"><div class="brand-lbl">Logos</div><div class="logo-row">';
       b.logos.forEach(function(l){
-        h+='<div class="logo-card"><div class="logo-hold"><img src="'+esc(l.src)+'" alt="'+esc(p.name)+' '+esc(l.label)+'"></div>'
+        h+='<div class="logo-card"><div class="logo-hold"'+(l.bg?' style="background:'+esc(l.bg)+'"':'')+'><img src="'+esc(l.src)+'" alt="'+esc(p.name)+' '+esc(l.label)+'"></div>'
           +'<div class="logo-meta"><span>'+esc(l.label)+'</span><a class="btn sm" href="'+esc(l.src)+'" download>Download</a></div></div>';
       });
       h+='</div></div>';
