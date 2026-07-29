@@ -344,7 +344,7 @@ var DELIV={
     printed:{status:'done', img:'thumbs/schreiner-postcard.jpg', qty:'1K', last:'Feb 11, 2026'},
     swag:[{item:'Tablecloth',status:'na'},{item:'Pens',img:'thumbs/schreiner-pen.jpg',qty:'300',last:'Jun 12, 2026',status:'done',vendor:'pens.com'}]
   },
-  'University of Texas at Tyler':{ printed:{status:'none'}, swag:[{item:'Tablecloth',status:'na'},{item:'Pens',status:'none'}] },
+  'University of Texas at Tyler':{ printed:{status:'none'}, swag:[{item:'Tablecloth',status:'na'},{item:'Pens',img:'thumbs/uttyler-pen.jpg',last:'Jul 1, 2026',status:'done'}] },
   'York College of Pennsylvania':{
     printed:{status:'none'},
     swag:[{item:'Tablecloth',img:'thumbs/york-tablecloth.jpg',qty:'1',last:'Mar 25, 2026',status:'done',vendor:'bestofsigns.com'},
@@ -403,7 +403,7 @@ function modalVariant(fi,vi){ var f=PARTNERS[sel].files[fi]; var vs=f.variants||
 function openOPModal(fi){
   var p=PARTNERS[sel], f=(p.files||[])[fi]; if(!f) return;
   var vs=f.variants||((f.html||f.pdf)?[{label:'',html:f.html,pdf:f.pdf}]:[]);
-  var thumb=f.img?'<img src="'+f.img+'" alt="'+esc(f.prog)+'">':'<div class="opm-blank">'+esc(f.prog)+'</div>';
+  var thumb=f.img?'<img src="'+bust(f.img)+'" alt="'+esc(f.prog)+'">':'<div class="opm-blank">'+esc(f.prog)+'</div>';
   var rows=vs.map(function(v,vi){
     if(!v.html&&!v.pdf) return '';
     var acts='<button class="btn primary sm" onclick="modalReview('+fi+','+vi+')">Request review</button>';
@@ -429,13 +429,13 @@ function opThumbs(p){
       if(built){
         // clean, clickable card → opens a focused modal with the review/download options
         h+='<div class="thumb" onclick="openOPModal('+fi+')" title="'+esc(f.prog)+' — review or download">'
-          +'<div class="page"><span class="st-dot'+(flag?' rev':'')+'"></span>'+(f.img?'<img src="'+f.img+'" alt="'+esc(f.prog)+' one-pager">':'<div class="pg-blank">'+esc(f.prog)+'</div>')+'</div>'
+          +'<div class="page"><span class="st-dot'+(flag?' rev':'')+'"></span>'+(f.img?'<img src="'+bust(f.img)+'" alt="'+esc(f.prog)+' one-pager">':'<div class="pg-blank">'+esc(f.prog)+'</div>')+'</div>'
           +'<div class="thumb-cap">'+esc(f.prog)+'</div>'
           +(flag?'<div class="op-flag" title="'+esc(flag)+'">Needs revision</div>':(draft?'<div class="op-draft" title="HTML draft — still being designed; no print PDF yet">Draft · HTML only</div>':''))
           +'</div>';
       } else {
         h+='<div class="thumb" title="'+esc(f.prog)+' — not yet rebuilt as an HTML one-pager">'
-          +'<div class="page legacy">'+(f.img?'<img src="'+f.img+'" alt="'+esc(f.prog)+'">':'')+'</div>'
+          +'<div class="page legacy">'+(f.img?'<img src="'+bust(f.img)+'" alt="'+esc(f.prog)+'">':'')+'</div>'
           +'<div class="thumb-cap">'+esc(f.prog)+'</div><div class="op-links muted">PDF pending</div></div>';
       }
     });
@@ -460,6 +460,9 @@ function opThumbs(p){
 }
 
 function esc(s){return (s==null?'':String(s)).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+// Cache-bust thumbnails whose file contents change in place (same filename). Bump ASSETV on re-render.
+var ASSETV='20260729b';
+function bust(u){ return u?(u+(u.indexOf('?')<0?'?v=':'&v=')+ASSETV):u; }
 function icon(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';}
 var IC={
   web:icon('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/>'),
