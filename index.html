@@ -192,7 +192,7 @@ var PROXY='https://funny-eagle-3488.idesign-creative.deno.net/';        // revie
 var REVIEW_BASE='https://idesign-creative.github.io/brand-site-review/'; // Review dashboard/library base
 // Real data from the OPX Partner Audit sheet. Each partner shows its EPD (enrollment rep) only — no coordinator contacts.
 var PARTNERS=[
-  {name:'Our Lady of the Lake University', site:'https://onlineprograms.ollusa.edu/', postcard:'done', pens:'na', onepagers:{done:2,total:3}, epd:{name:'Carlos Ramos',phone:'(210) 941-1513',email:'cramos@ollusa.edu'},
+  {name:'Our Lady of the Lake University', site:'https://onlineprograms.ollusa.edu/', postcard:'done', pens:'na', onepagers:{done:3,total:3}, epd:{name:'Carlos Ramos',phone:'(210) 941-1513',email:'cramos@ollusa.edu'},
    brand:{
      logos:[{label:'Wordmark (white)', src:'brand/ollu-logo.png', bg:'#0056B8'}],
      colors:[{name:'OLLU Blue',hex:'#0056B8'},{name:'Gold',hex:'#D8C622'},{name:'Ink',hex:'#333333'}],
@@ -204,7 +204,9 @@ var PARTNERS=[
     {prog:'MSW', img:'thumbs/ollu-msw.jpg',
       check:{'Program name':'MSW','Cost per credit':'$750'},
       variants:[{label:'', html:'onepagers/ollu-msw.html', pdf:'onepagers/ollu-msw.pdf'}]},
-    {prog:'BSW', img:'thumbs/ollu-bsw.jpg'}
+    {prog:'BSW', img:'thumbs/ollu-bsw.jpg',
+      check:{'Program name':'BSW','Cost per credit':'$509'},
+      variants:[{label:'', html:'onepagers/ollu-bsw.html', pdf:'onepagers/ollu-bsw.pdf'}]}
   ]},
   {name:'Salve Regina University', site:'https://onlinenursing.salve.edu/', postcard:'pending', pens:'na', onepagers:{done:5,total:6}, epd:{name:'Liana Wiemels',phone:'216.337.0617',email:'Liana.Wiemels@salve.edu'},
    brand:{
@@ -265,8 +267,8 @@ var PARTNERS=[
   ]},
   {name:'Schreiner University', site:'https://onlinenursing.schreiner.edu/', postcard:'done', pens:'na', onepagers:{done:2,total:2}, epd:{name:'Carlos Ramos',phone:'830.307.5814',email:'cramos@schreiner.edu'},
    brand:{
-     logos:[{label:'Wordmark', src:'brand/schreiner-logo.png'},{label:'Seal', src:'brand/schreiner-seal.png'}],
-     colors:[{name:'Maroon',hex:'#6E1230'},{name:'Deep Maroon',hex:'#540008'},{name:'Gold',hex:'#F7A81A'},{name:'Blush',hex:'#F3E9EA'}],
+     logos:[{label:'Wordmark', src:'brand/schreiner-logo.png'},{label:'Stacked', src:'brand/schreiner-logo-stacked.png'},{label:'Seal', src:'brand/schreiner-seal.png'}],
+     colors:[{name:'Hill Country Maroon',hex:'#510000'},{name:'Summit White',hex:'#FFFFFF'},{name:'Mountaineer Black',hex:'#000000'},{name:'Ranger Steel',hex:'#707070'},{name:'Texas Limestone',hex:'#D1D1D1'},{name:'Bluebonnet Sky',hex:'#00A9CE'},{name:'Lone Star Gold',hex:'#FAA819'},{name:'Canyon Sunset',hex:'#EA7A26'}],
      fonts:[{name:'Poppins',role:'Brand · sans',url:'https://fonts.google.com/specimen/Poppins'}]
    }, files:[
     {prog:'MSN-FNP', img:'thumbs/schreiner-msnfnp.jpg',
@@ -282,7 +284,12 @@ var PARTNERS=[
         {label:'Generic', html:'onepagers/schreiner-pmhnp-generic.html', pdf:'onepagers/schreiner-pmhnp-generic.pdf'}
       ]}
   ]},
-  {name:'University of Texas at Tyler', site:'https://nursingonline.uttyler.edu/', postcard:'pending', pens:'na', onepagers:{done:17,total:18}, epd:{name:'Carlos Ramos',phone:'(903) 525-6697',email:'cramos@uttler.edu'}, files:[
+  {name:'University of Texas at Tyler', site:'https://nursingonline.uttyler.edu/', postcard:'pending', pens:'na', onepagers:{done:17,total:18}, epd:{name:'Carlos Ramos',phone:'(903) 525-6697',email:'cramos@uttler.edu'},
+   brand:{
+     logos:[{label:'Horizontal (SON)', src:'brand/uttyler-logo.png'},{label:'Stacked (SON)', src:'brand/uttyler-logo-stacked.png'}],
+     colors:[{name:'Tomato Bisque',hex:'#CB6015'},{name:'Lost in Space',hex:'#002F6C'},{name:'White',hex:'#FFFFFF'},{name:'Inkblot',hex:'#323E48'},{name:'Sleepless Blue',hex:'#B9D8EA'},{name:'Concrete',hex:'#D0CFCE'},{name:'Dove',hex:'#B6ADA5'}],
+     fonts:[{name:'Gotham',role:'Brand · sans (licensed)',url:'https://www.typography.com/fonts/gotham/overview'}]
+   }, files:[
     {prog:'RN-BSN',       img:'thumbs/uttyler-rnbsn.jpg'},
     {prog:'ADN-BSN',      img:'thumbs/uttyler-adnbsn.jpg'},
     {prog:'RN-MSN',       img:'thumbs/uttyler-rnmsn.jpg'},
@@ -311,7 +318,7 @@ var DELIV={
     swag:[{item:'Tablecloth',img:'thumbs/ollu-tablecloth.jpg',qty:'1',last:'Mar 25, 2026',status:'done',vendor:'bestofsigns.com'},
           {item:'Pens',img:'thumbs/ollu-pen.jpg',qty:'300',last:'Mar 25, 2026',status:'done',vendor:'pens.com'}]
   },
-  'Salve Regina University':{ printed:{status:'none'}, swag:[{item:'Tablecloth',status:'na'},{item:'Pens',qty:'180',last:'Jul 1, 2026',status:'done'}] },
+  'Salve Regina University':{ printed:{status:'none'}, swag:[{item:'Tablecloth',img:'thumbs/salve-tablecloth.jpg',status:'pending'},{item:'Pens',img:'thumbs/salve-pen.jpg',qty:'180',last:'Jul 1, 2026',status:'done'}] },
   'Schreiner University':{
     printed:{status:'done', img:'thumbs/schreiner-postcard.jpg', qty:'1K', last:'Feb 11, 2026'},
     swag:[{item:'Tablecloth',status:'na'},{item:'Pens',img:'thumbs/schreiner-pen.jpg',qty:'300',last:'Jun 12, 2026',status:'done',vendor:'pens.com'}]
@@ -604,8 +611,9 @@ function renderDetail(){
     if(b.fonts&&b.fonts.length){
       h+='<div class="brand-block"><div class="brand-lbl">Typefaces</div><div class="font-row">';
       b.fonts.forEach(function(f){
+        var fcta=/fonts\.google\.com/.test(f.url)?'Download ↗':'Get font ↗';
         h+='<div class="font-card"><div class="font-glyph">Ag</div><div class="font-info"><div class="font-name">'+esc(f.name)+'</div><div class="font-role">'+esc(f.role)+'</div></div>'
-          +'<a class="btn sm" href="'+esc(f.url)+'" target="_blank" rel="noopener">Download ↗</a></div>';
+          +'<a class="btn sm" href="'+esc(f.url)+'" target="_blank" rel="noopener">'+fcta+'</a></div>';
       });
       h+='</div></div>';
     }
