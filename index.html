@@ -145,11 +145,12 @@
   .logo-hold img{max-width:100%;max-height:100%;object-fit:contain}
   .logo-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;font-size:12.5px;color:var(--text)}
   .sw-row{display:flex;flex-wrap:wrap;gap:10px}
-  .sw{display:flex;flex-direction:column;align-items:flex-start;gap:0;background:var(--field);border:1px solid var(--line);border-radius:0 12px 0 12px;padding:0 0 8px;cursor:pointer;width:118px;overflow:hidden;transition:border-color .15s,transform .1s;text-align:left}
+  .sw{display:flex;flex-direction:column;align-items:flex-start;gap:0;background:var(--field);border:1px solid var(--line);border-radius:0 12px 0 12px;padding:0 0 8px;cursor:pointer;width:150px;overflow:hidden;transition:border-color .15s,transform .1s;text-align:left}
   .sw:hover{border-color:var(--ocean70);transform:translateY(-1px)}
   .sw-chip{width:100%;height:52px;display:block;margin-bottom:8px;border-bottom:1px solid rgba(0,0,0,.15)}
   .sw-name{font-size:12px;font-weight:700;color:var(--text);padding:0 10px}
   .sw-hex{font-size:11px;font-family:ui-monospace,Menlo,monospace;color:var(--muted);padding:0 10px;text-transform:uppercase}
+  .sw-spec{font-size:10px;color:var(--muted);padding:1px 10px 0;letter-spacing:.01em}
   .font-card{display:flex;align-items:center;gap:12px;background:var(--field);border:1px solid var(--line);border-radius:0 12px 0 12px;padding:12px 14px;min-width:230px}
   .font-glyph{width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--surf);border:1px solid var(--line);border-radius:8px;font-size:20px;font-weight:800;color:var(--primary)}
   .font-info{flex:1}
@@ -209,7 +210,7 @@ var PARTNERS=[
   {name:'Salve Regina University', site:'https://onlinenursing.salve.edu/', postcard:'pending', pens:'na', onepagers:{done:5,total:6}, epd:{name:'Liana Wiemels',phone:'216.337.0617',email:'Liana.Wiemels@salve.edu'},
    brand:{
      logos:[{label:'Crest + wordmark', src:'brand/salve-logo.png'}],
-     colors:[{name:'Salve Navy',hex:'#003057'},{name:'Salve Green',hex:'#00843C'},{name:'Slate',hex:'#4D6472'},{name:'Mist',hex:'#EAF1F6'}],
+     colors:[{name:'Denim',hex:'#002855',cmyk:'100, 52, 0, 63',pms:'295'},{name:'Salt',hex:'#F0F0F0'},{name:'White',hex:'#FFFFFF',cmyk:'0, 0, 0, 0'},{name:'Dijon',hex:'#C99700',cmyk:'0, 24, 100, 21',pms:'117'},{name:'Emerald',hex:'#008755',cmyk:'100, 0, 7, 64',pms:'7725'}],
      fonts:[{name:'Aleo',role:'Headings · serif',url:'https://fonts.google.com/specimen/Aleo'},{name:'Libre Franklin',role:'Body · sans',url:'https://fonts.google.com/specimen/Libre+Franklin'}]
    }, files:[
     {prog:'RN-BS', img:'thumbs/salve-rnbs.jpg',
@@ -597,7 +598,13 @@ function renderDetail(){
     if(b.colors&&b.colors.length){
       h+='<div class="brand-block"><div class="brand-lbl">Color palette <span class="bhint">click to copy hex</span></div><div class="sw-row">';
       b.colors.forEach(function(c){
-        h+='<button class="sw" onclick="copyHex(\''+esc(c.hex)+'\')" title="Copy '+esc(c.hex)+'"><span class="sw-chip" style="background:'+esc(c.hex)+'"></span><span class="sw-name">'+esc(c.name)+'</span><span class="sw-hex">'+esc(c.hex)+'</span></button>';
+        h+='<button class="sw" onclick="copyHex(\''+esc(c.hex)+'\')" title="Copy '+esc(c.hex)+'">'
+          +'<span class="sw-chip" style="background:'+esc(c.hex)+'"></span>'
+          +'<span class="sw-name">'+esc(c.name)+'</span>'
+          +'<span class="sw-hex">'+esc(c.hex)+'</span>'
+          +(c.cmyk?'<span class="sw-spec">CMYK '+esc(c.cmyk)+'</span>':'')
+          +(c.pms?'<span class="sw-spec">PMS '+esc(c.pms)+'</span>':'')
+          +'</button>';
       });
       h+='</div></div>';
     }
