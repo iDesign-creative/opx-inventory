@@ -169,14 +169,14 @@ var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 var SUPA_H={apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY};
 var PROXY='https://funny-eagle-3488.idesign-creative.deno.net/';        // reviewer overlay proxy (from the Review app)
 var REVIEW_BASE='https://idesign-creative.github.io/brand-site-review/'; // Review dashboard/library base
-// Real data from the OPX Partner Audit sheet (coordinator contacts included per approval).
+// Real data from the OPX Partner Audit sheet. Each partner shows its EPD (enrollment rep) only — no coordinator contacts.
 var PARTNERS=[
-  {name:'Our Lady of the Lake University', site:'https://onlineprograms.ollusa.edu/', postcard:'done', pens:'na', onepagers:{done:3,total:6}, email:'cramos@ollusa.edu', phone:'(210) 941-1513', files:[
+  {name:'Our Lady of the Lake University', site:'https://onlineprograms.ollusa.edu/', postcard:'done', pens:'na', onepagers:{done:3,total:6}, epd:{name:'Carlos Ramos',phone:'(210) 941-1513',email:'cramos@ollusa.edu'}, files:[
     {prog:'BSW', img:'thumbs/ollu-bsw.jpg'},
     {prog:'MSW', img:'thumbs/ollu-msw.jpg'},
     {prog:'MA',  img:'thumbs/ollu-ma.jpg'}
   ]},
-  {name:'Salve Regina University', site:'https://onlinenursing.salve.edu/', postcard:'pending', pens:'na', onepagers:{done:5,total:6}, email:'carlos.ramos@salve.edu', phone:'', epd:{name:'Liana Wiemels',phone:'216.337.0617',email:'Liana.Wiemels@salve.edu'}, files:[
+  {name:'Salve Regina University', site:'https://onlinenursing.salve.edu/', postcard:'pending', pens:'na', onepagers:{done:5,total:6}, epd:{name:'Liana Wiemels',phone:'216.337.0617',email:'Liana.Wiemels@salve.edu'}, files:[
     {prog:'RN-BS', img:'thumbs/salve-rnbs.jpg',
       check:{'Program name':'RN to B.S.','Tuition':['$9,240','$10,920']},
       variants:[
@@ -228,7 +228,7 @@ var PARTNERS=[
         {label:'Generic', html:'onepagers/salve-med-generic.html', pdf:'onepagers/salve-med-generic.pdf'}
       ]}
   ]},
-  {name:'Schreiner University', site:'https://onlinenursing.schreiner.edu/', postcard:'done', pens:'na', onepagers:{done:2,total:2}, email:'cramos@schreiner.edu', phone:'830.307.5814', files:[
+  {name:'Schreiner University', site:'https://onlinenursing.schreiner.edu/', postcard:'done', pens:'na', onepagers:{done:2,total:2}, epd:{name:'Carlos Ramos',phone:'830.307.5814',email:'cramos@schreiner.edu'}, files:[
     {prog:'MSN-FNP', img:'thumbs/schreiner-msnfnp.jpg',
       check:{'Program name':'Family Nurse Practitioner'},
       variants:[
@@ -242,7 +242,7 @@ var PARTNERS=[
         {label:'Generic', html:'onepagers/schreiner-pmhnp-generic.html', pdf:'onepagers/schreiner-pmhnp-generic.pdf'}
       ]}
   ]},
-  {name:'University of Texas at Tyler', site:'https://nursingonline.uttyler.edu/', postcard:'pending', pens:'na', onepagers:{done:17,total:18}, email:'cramos@uttler.edu', phone:'(903) 525-6697', files:[
+  {name:'University of Texas at Tyler', site:'https://nursingonline.uttyler.edu/', postcard:'pending', pens:'na', onepagers:{done:17,total:18}, epd:{name:'Carlos Ramos',phone:'(903) 525-6697',email:'cramos@uttler.edu'}, files:[
     {prog:'RN-BSN',       img:'thumbs/uttyler-rnbsn.jpg'},
     {prog:'ADN-BSN',      img:'thumbs/uttyler-adnbsn.jpg'},
     {prog:'RN-MSN',       img:'thumbs/uttyler-rnmsn.jpg'},
@@ -257,11 +257,11 @@ var PARTNERS=[
     {prog:'DNP',          img:'thumbs/uttyler-dnp.jpg'},
     {prog:'PM-AGACNP',    img:'thumbs/uttyler-pmagacnp.jpg'}
   ]},
-  {name:'York College of Pennsylvania', site:'https://onlinedegrees.ycp.edu/', postcard:'pending', pens:'na', onepagers:{done:2,total:2}, email:'', phone:'', epd:{name:'Liana Wiemels',phone:'216.337.0617',email:'lwiemels@ycp.edu'}, files:[
+  {name:'York College of Pennsylvania', site:'https://onlinedegrees.ycp.edu/', postcard:'pending', pens:'na', onepagers:{done:2,total:2}, epd:{name:'Liana Wiemels',phone:'216.337.0617',email:'lwiemels@ycp.edu'}, files:[
     {prog:'RN-BSN', img:'thumbs/ycp-rnbsn.jpg'},
     {prog:'MSN',    img:'thumbs/ycp-msn.jpg'}
   ]},
-  {name:'Rio of Ohio', site:'', postcard:'pending', pens:'na', onepagers:{done:0,total:0}, email:'', phone:'', epd:{name:'Liana Wiemels',phone:'216.337.0617',email:''}}
+  {name:'Rio of Ohio', site:'', postcard:'pending', pens:'na', onepagers:{done:0,total:0}, epd:{name:'Liana Wiemels',phone:'216.337.0617',email:''}}
 ];
 
 // Printed (postcard) + SWAG deliverables — preview images + reorder data from the per-partner audit tabs.
@@ -495,10 +495,8 @@ function renderDetail(){
   var h='<div class="crumb" onclick="goHome()">← All partners</div>';
   h+='<div class="phead"><h1>'+esc(p.name)+'</h1><span class="statustag '+s+'">'+STATUS_LABEL[s]+'</span></div>';
   h+='<div class="contact">';
-  if(p.email) h+='<span><span class="k">Coordinator</span><a href="mailto:'+esc(p.email)+'">'+esc(p.email)+'</a></span>';
-  if(p.phone) h+='<span><span class="k">Phone</span>'+esc(p.phone)+'</span>';
   if(p.epd){ var ev=(typeof p.epd==='string')?{name:p.epd}:p.epd; var ep=[esc(ev.name||'')]; if(ev.phone)ep.push(esc(ev.phone)); if(ev.email)ep.push('<a href="mailto:'+esc(ev.email)+'">'+esc(ev.email)+'</a>'); h+='<span><span class="k">EPD</span>'+ep.join(' · ')+'</span>'; }
-  if(!p.email&&!p.phone&&!p.epd) h+='<span class="k">No contact on file</span>';
+  if(!p.epd) h+='<span class="k">No EPD on file</span>';
   h+='</div>';
 
   // Website
@@ -545,7 +543,7 @@ function renderDetail(){
   h+='<div class="sec"><div class="sech"><span class="si">'+IC.event+'</span><h2>Events</h2>'+exBtn+'</div>'
     +'<div class="empty">No event materials tracked yet.<button class="btn sm" onclick="toast(\'Add event material\')">Add item</button></div></div>';
 
-  h+='<div class="note">One-pagers are <b style="color:var(--sub)">HTML → PDF</b> files in <b style="color:var(--sub)">/onepagers/</b> (View opens the live HTML, PDF is the print export). SWAG photos and reorder dates come from the audit sheet; “Share review link” writes a real request to <b style="color:var(--sub)">Studio Review</b>. The Reorder / Order buttons are still demonstrative.</div>';
+  h+='<div class="note">One-pagers are <b style="color:var(--sub)">HTML → PDF</b> files in <b style="color:var(--sub)">/onepagers/</b> (Request review opens the HTML in Studio Review; Download gets the print PDF). SWAG photos and reorder dates come from the audit sheet. The <b style="color:var(--sub)">Reorder / Order</b> buttons send a request to Whitney on Slack.</div>';
   document.getElementById('detail').innerHTML=h;
   if(p.site) refreshWebReview(p);
 }
