@@ -434,7 +434,16 @@ function refreshWebReview(p){
   });
 }
 function reqReview(what){toast('“'+what+'” sent to Review ✓');}
-function reorder(what){toast('Reorder request logged for '+what+' ✓');}
+function reorder(what,partner,btn){
+  // Confirm to the user immediately; the Slack ping is best-effort behind the proxy.
+  if(btn){ btn.disabled=true; btn.textContent='Requested ✓'; }
+  toast('Order request submitted — Whitney Williams will reach out for details.');
+  // Fire-and-forget: proxy holds the Slack webhook server-side and DMs Whitney.
+  // No Content-Type header → browser sends text/plain (CORS-simple, no preflight).
+  try{
+    fetch(PROXY+'reorder',{method:'POST',body:JSON.stringify({item:what,partner:partner||'',source:'OPX Inventory'})}).catch(function(){});
+  }catch(e){}
+}
 
 function renderList(){
   document.getElementById('pcount').textContent=PARTNERS.length;
@@ -503,7 +512,7 @@ function renderDetail(){
     + '<div class="rmain"><div class="rname">Postcard (5×7)</div><div class="rmeta">'
       + (pr.qty||pr.last? 'Qty '+(pr.qty||'—')+' · Last ordered '+(pr.last||'—') : 'Not ordered yet')
       + (pr.note? ' · <span style="color:#E7B35C">'+esc(pr.note)+'</span>':'') + '</div></div>'
-    + pill(pr.status)+'<button class="btn" onclick="reorder(\'Postcard (5×7)\')">Reorder</button></div></div>';
+    + pill(pr.status)+'<button class="btn" onclick="reorder(\'Postcard (5×7)\',\''+esc(p.name)+'\',this)">Reorder</button></div></div>';
 
   // SWAG — product images from the audit sheet + real reorder data
   h+='<div class="sec"><div class="sech"><span class="si">'+IC.swag+'</span><h2>SWAG</h2>'+exBtn+'</div>';
@@ -513,7 +522,7 @@ function renderDetail(){
       + '<div class="rmain"><div class="rname">'+esc(s.item)+'</div><div class="rmeta">'
         + (s.qty||s.last? 'Qty '+(s.qty||'—')+' · Last ordered '+(s.last||'—')+(s.vendor?' · '+esc(s.vendor):'') : (s.status==='na'?'Not applicable':'Not ordered yet'))
         + '</div></div>'
-      + pill(s.status)+'<button class="btn" onclick="reorder(\''+esc(s.item)+'\')">'+(s.status==='done'?'Reorder':'Order')+'</button></div>';
+      + pill(s.status)+'<button class="btn" onclick="reorder(\''+esc(s.item)+'\',\''+esc(p.name)+'\',this)">'+(s.status==='done'?'Reorder':'Order')+'</button></div>';
   });
   h+='</div>';
 
