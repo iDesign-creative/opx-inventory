@@ -200,7 +200,7 @@ var REVIEW_BASE='https://idesign-creative.github.io/brand-site-review/'; // Revi
 var PARTNERS=[
   {name:'Our Lady of the Lake University', site:'https://onlineprograms.ollusa.edu/', postcard:'done', pens:'na', onepagers:{done:3,total:3}, epd:{name:'Carlos Ramos',phone:'(210) 941-1513',email:'cramos@ollusa.edu'},
    brand:{
-     logos:[{label:'Wordmark (white)', src:'brand/ollu-logo.png', bg:'#0056B8'}],
+     logos:[{label:'Primary (color)', src:'brand/ollu-logo-horizontal.jpg'},{label:'Wordmark (white)', src:'brand/ollu-logo.png', bg:'#0056B8'}],
      colors:[{name:'OLLU Blue',hex:'#0056B8'},{name:'Gold',hex:'#D8C622'},{name:'Ink',hex:'#333333'}],
      fonts:[{name:'Raleway',role:'Brand · sans',url:'https://fonts.google.com/specimen/Raleway'}]
    }, files:[
@@ -216,7 +216,7 @@ var PARTNERS=[
   ]},
   {name:'Salve Regina University', site:'https://onlinenursing.salve.edu/', postcard:'pending', pens:'na', onepagers:{done:5,total:6}, epd:{name:'Liana Wiemels',phone:'216.337.0617',email:'Liana.Wiemels@salve.edu'},
    brand:{
-     logos:[{label:'Crest + wordmark', src:'brand/salve-logo.png'}],
+     logos:[{label:'Primary (horizontal)', src:'brand/salve-logo-horizontal.png'},{label:'Crest', src:'brand/salve-logo.png'}],
      colors:[{name:'Denim',hex:'#002855'},{name:'Dijon',hex:'#C99700'},{name:'Emerald',hex:'#008755'}],
      fonts:[{name:'Aleo',role:'Headings · serif',url:'https://fonts.google.com/specimen/Aleo'},{name:'Libre Franklin',role:'Body · sans',url:'https://fonts.google.com/specimen/Libre+Franklin'}]
    }, files:[
@@ -323,7 +323,12 @@ var PARTNERS=[
       check:{'Program name':'MSN'},
       variants:[{label:'', pdf:'onepagers/ycp-msn.pdf'}]}      // PDF for now; HTML to follow
   ]},
-  {name:'Rio of Ohio', site:'', postcard:'pending', pens:'na', onepagers:{done:0,total:0}, epd:{name:'Liana Wiemels',phone:'216.337.0617',email:''}}
+  {name:'Rio of Ohio', site:'', postcard:'pending', pens:'na', onepagers:{done:0,total:0}, epd:{name:'Liana Wiemels',phone:'216.337.0617',email:''},
+   brand:{
+     logos:[{label:'Primary (horizontal)', src:'brand/rio-logo.png'},{label:'Shield', src:'brand/rio-shield.png'}],
+     colors:[{name:'Rio Red',hex:'#B5121B'},{name:'Black',hex:'#000000'},{name:'White',hex:'#FFFFFF'}],
+     fonts:[{name:'Myriad Pro',role:'Sans · primary',url:'https://fonts.adobe.com/fonts/myriad'},{name:'Adobe Caslon Pro',role:'Serif · display',url:'https://fonts.adobe.com/fonts/adobe-caslon'}]
+   }}
 ];
 
 // Printed (postcard) + SWAG deliverables — preview images + reorder data from the per-partner audit tabs.
@@ -559,7 +564,6 @@ function renderHome(){
     h+='<div class="pcard" onclick="sel='+i+';renderList();renderDetail();window.scrollTo(0,0)">'
       +'<div class="pcard-top">'+(ir?'<span class="dot review"></span><span class="statustag review">In review</span>':'')+'</div>'
       +'<div class="pcard-logo"'+(lg&&lg.bg?' style="background:'+esc(lg.bg)+'"':'')+'>'+(lg?'<img src="'+esc(lg.src)+'" alt="'+esc(p.name)+' logo">':'<span class="pcard-logo-fb">'+esc(p.name)+'</span>')+'</div>'
-      +'<div class="pcard-name">'+esc(p.name)+'</div>'
       +'<div class="pcard-meta">'+(n? n+' one-pager'+(n===1?'':'s')+' ready' : 'No one-pagers yet')+(p.site?' · microsite live':'')+'</div>'
       +'</div>';
   });
