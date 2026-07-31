@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OPX Inventory · iDesign Studio</title>
+<title>OPX Marketing Hub · iDesign Studio</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
   :root{
@@ -172,7 +172,7 @@
 <body>
 <header class="topbar">
   <img class="logo" src="Studio-logo-white.svg" alt="iDesign Studio">
-  <span class="ctx" style="cursor:pointer" onclick="goHome()"><b>OPX Inventory</b><span class="sep">·</span>Partner Audit</span>
+  <span class="ctx" style="cursor:pointer" onclick="goHome()"><b>OPX Marketing Hub</b><span class="sep">·</span>Partner Audit</span>
   <span class="spacer"></span>
   <span class="linklike" onclick="location.href='https://idesign-creative.github.io/studio-hub/hub.html'">← All tools</span>
 </header>
@@ -393,7 +393,7 @@ function requestOPReview(htmlRel,pdfRel,label){
   var link=useHtml ? (PROXY+'?url='+encodeURIComponent(abs)) : (REVIEW_BASE+'pdf.html?v='+encodeURIComponent(abs)+'&name='+encodeURIComponent(label||''));
   fetchLatestReview(abs).then(function(ex){
     if(ex && ex.archived!==true){ copy(link,'Review link copied — one-pager already in Review'); return; }
-    return fetch(SUPA_URL+'/rest/v1/reviews',{method:'POST',headers:Object.assign({'Content-Type':'application/json',Prefer:'return=minimal'},SUPA_H),body:JSON.stringify([{url:abs,name:label||null,project:abs,created_by:'iDesign · OPX Inventory'}])})
+    return fetch(SUPA_URL+'/rest/v1/reviews',{method:'POST',headers:Object.assign({'Content-Type':'application/json',Prefer:'return=minimal'},SUPA_H),body:JSON.stringify([{url:abs,name:label||null,project:abs,created_by:'iDesign · OPX Marketing Hub'}])})
       .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); copy(link,'One-pager sent to Studio Review — link copied'); loadActiveReviews(); });
   }).catch(function(e){ toast('Couldn’t reach Review ('+e.message+')'); });
 }
@@ -493,7 +493,7 @@ function requestReview(btn,url,name){
   if(btn){ btn.disabled=true; btn.textContent='Requesting…'; }
   fetchLatestReview(url).then(function(existing){
     if(existing && existing.archived!==true){ copyReviewLink(url); return refreshWebReview(PARTNERS[sel]); } // active → reuse, don't duplicate
-    return fetch(SUPA_URL+'/rest/v1/reviews',{method:'POST',headers:Object.assign({'Content-Type':'application/json',Prefer:'return=minimal'},SUPA_H),body:JSON.stringify([{url:url,name:name||null,project:hostOf(url),created_by:'iDesign · OPX Inventory'}])})
+    return fetch(SUPA_URL+'/rest/v1/reviews',{method:'POST',headers:Object.assign({'Content-Type':'application/json',Prefer:'return=minimal'},SUPA_H),body:JSON.stringify([{url:url,name:name||null,project:hostOf(url),created_by:'iDesign · OPX Marketing Hub'}])})
       .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); copyReviewLink(url); toast('Added to Studio Review · requested '+fmtReqDate(Date.now())+' — link copied'); loadActiveReviews(); return refreshWebReview(PARTNERS[sel]); });
   }).catch(function(e){ toast('Couldn’t reach Review ('+e.message+')'); refreshWebReview(PARTNERS[sel]); });
 }
@@ -539,7 +539,7 @@ function confirmReorder(){
   // Fire-and-forget: proxy holds the Slack webhook server-side and DMs Whitney.
   // No Content-Type header → browser sends text/plain (CORS-simple, no preflight).
   try{
-    fetch(PROXY+'reorder',{method:'POST',body:JSON.stringify({item:r.what,partner:r.partner,source:'OPX Inventory'})}).catch(function(){});
+    fetch(PROXY+'reorder',{method:'POST',body:JSON.stringify({item:r.what,partner:r.partner,source:'OPX Marketing Hub'})}).catch(function(){});
   }catch(e){}
 }
 
